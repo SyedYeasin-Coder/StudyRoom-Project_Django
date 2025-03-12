@@ -12,22 +12,24 @@ from django.views.decorators.csrf import csrf_exempt
 def loginPage(request):
     page = 'login'
     me = ''
+
     if request.user.is_authenticated:
         return redirect('home')
 
     if request.method == "POST":
         email = request.POST.get('email')
         password = request.POST.get('password')
-        try:
-            user = User.objects.get(email=email)
-            user = authenticate(request, email=email, password=password)
-            if user != None:
-                login(request, user)
-                return redirect('home')
-        except:
-            me = 'Email or Password doesn\'t match!'
-            return render(request, 'base/login_register.html', {'me' : me,'page' : page})
-    return render(request, 'base/login_register.html', {'page' : page})
+
+        user = authenticate(request, email=email, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('home')
+        else:
+            me = "Invalid email or password!" 
+
+    return render(request, 'base/login_register.html', {'me': me, 'page': page})
+
 
 def logoutUser(request):
     logout(request)
@@ -35,18 +37,20 @@ def logoutUser(request):
 
 def registerUser(request):
     form = MyUserCreationForm()
-    me = 'User Already Exists or Password didn\'t match Password Confirmation!'
-    
+    me = ""
+
     if request.method == 'POST':
-        form = MyUserCreationForm(request.POST, request.FILES)  # Include request.FILES here
+        form = MyUserCreationForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
             login(request, user)
             return redirect('home')
         else:
-            return render(request, 'base/login_register.html', {'me': me, 'form': form})
-    
-    return render(request, 'base/login_register.html', {'form': form})
+            me = 'User already exists or passwords did not match!'
+
+    return render(request, 'base/login_register.html', {'me': me, 'form': form})
+
+
 
 
 @login_required(login_url='login')
@@ -89,10 +93,10 @@ def home(request):
         Q(host__username__icontains=q) |
         Q(name__icontains=q) |
         Q(description__icontains=q) 
-        )
+        )[:5]
     topics = Topic.objects.all()[:4]
     room_count = rooms.count()
-    messages = Message.objects.filter(Q(room__topic__name__icontains=q))
+    messages = Message.objects.filter(Q(room__topic__name__icontains=q))[:5]
     context = {"rooms" : rooms, "topics" : topics, "room_count" : room_count, "messages": messages}
     return render(request, 'base/Home.html', context)
 def room(request,pk):
@@ -178,5 +182,5 @@ def topicsPage(request):
     return render (request, 'base/topics.html', {"topics": topics})
 
 def activityPage(request):
-    messages = Message.objects.all()
+    messages = Message.objects.all()[:5]
     return render(request, 'base/activity.html', {"messages" : messages})
