@@ -81,7 +81,7 @@ def userProfile(request, pk):
     user = User.objects.get(id=pk)
     rooms = user.room_set.all()
     messages = user.message_set.all()
-    topics = Topic.objects.all()
+    topics = Topic.objects.all()[:4]
     return render(request, 'base/profile.html', {'user' : user, 'rooms' : rooms, 'messages' : messages, 'topics' : topics})
 
 def home(request):
