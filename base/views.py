@@ -10,7 +10,6 @@ from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 def loginView(request):
-    page = 'login'
     me = ''
 
     if request.user.is_authenticated:
@@ -28,7 +27,7 @@ def loginView(request):
         else:
             me = "Invalid email or password!" 
 
-    return render(request, 'base/login_register.html', {'me': me, 'page': page})
+    return render(request, 'base/login_register.html', {'me': me, 'page': 'login'})
 
 
 def Userlogout(request):
@@ -83,8 +82,7 @@ def userProfile(request, pk):
     rooms = user.room_set.all()
     messages = user.message_set.all()
     topics = Topic.objects.all()
-    context = {'user' : user, 'rooms' : rooms, 'messages' : messages, 'topics' : topics}
-    return render(request, 'base/profile.html', context)
+    return render(request, 'base/profile.html', {'user' : user, 'rooms' : rooms, 'messages' : messages, 'topics' : topics})
 
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
@@ -97,8 +95,7 @@ def home(request):
     topics = Topic.objects.all()[:4]
     room_count = rooms.count()
     messages = Message.objects.filter(Q(room__topic__name__icontains=q))[:5]
-    context = {"rooms" : rooms, "topics" : topics, "room_count" : room_count, "messages": messages}
-    return render(request, 'base/Home.html', context)
+    return render(request, 'base/Home.html', {"rooms" : rooms, "topics" : topics, "room_count" : room_count, "messages": messages})
 def room(request,pk):
     room = Room.objects.get(id=pk)
     messages = room.message_set.all()
@@ -112,8 +109,7 @@ def room(request,pk):
         room.participants.add(request.user)
         return redirect('room', pk=room.id)
 
-    context = {"room" : room, "messages" : messages, 'participants': participants}
-    return render(request, 'base/room.html', context)  
+    return render(request, 'base/room.html', {"room" : room, "messages" : messages, 'participants': participants})  
 
 
 @login_required(login_url='login')
@@ -131,8 +127,7 @@ def createRoom(request):
             description = request.POST.get('description')
         )
         return redirect("home")
-    context = {"form" : form , "topics" : topics}
-    return render(request, 'base/room_form.html', context)
+    return render(request, 'base/room_form.html', {"form" : form , "topics" : topics})
 @login_required(login_url='login')
 def updateRoom(request, pk):
     room = Room.objects.get(id=pk)
@@ -149,8 +144,7 @@ def updateRoom(request, pk):
         room.topic = topic
         room.save()
         return redirect('home')
-    context = {'form' : form, "topics" : topics, "room" : room}
-    return render(request, 'base/room_form.html', context)
+    return render(request, 'base/room_form.html', {'form' : form, "topics" : topics, "room" : room})
 
 @login_required(login_url='login')
 def deleteRoom(request, pk):
@@ -160,8 +154,7 @@ def deleteRoom(request, pk):
     if request.method == 'POST':
         room.delete()
         return redirect('home')
-    context = {'obj' : room}
-    return render(request, 'base/delete.html', context)
+    return render(request, 'base/delete.html', {'obj' : room})
 @login_required(login_url='login')
 def deleteMessage(request, pk):
     message = Message.objects.get(id=pk)
@@ -170,8 +163,7 @@ def deleteMessage(request, pk):
     if request.method == 'POST':
         message.delete()
         return redirect('home')
-    context = {'obj' : message}
-    return render(request, 'base/delete.html', context)
+    return render(request, 'base/delete.html', {'obj' : message})
 
 
 #! Mobile Menu
