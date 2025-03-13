@@ -79,69 +79,16 @@ colorThemeMenu.addEventListener("click", () => {
   offScreenMenu.classList.toggle("active");
 })
 
-// const LTtheme = document.querySelector(".LT");  // Light theme button
-// const DTtheme = document.querySelector(".DT"); // Dark theme button
 
-// // Function to apply the theme from localStorage
-// function applyTheme(theme) {
-//   document.body.classList.remove("LT-1", "LT-2", "LT-3", "DT-1", "DT-2", "DT-3");
-//   document.body.classList.add(theme);
-// }
+const LTtheme = document.querySelector(".LT");  
+const DTtheme = document.querySelector(".DT"); 
 
-// // Load theme from localStorage on page load
-// document.addEventListener("DOMContentLoaded", () => {
-//   const savedTheme = localStorage.getItem("theme");  // Retrieve saved theme
-//   if (savedTheme) {
-//     applyTheme(savedTheme); // Apply the saved theme
-//   }
-// });
+const LTClasses = ["LT-1", "LT-2", "LT-3", "LT-4", "LT-5"]; 
+const DTClasses = ["DT-1", "DT-2", "DT-3", "DT-4", "DT-5"]; 
 
-// LTtheme.addEventListener("click", () => {
-//   let newTheme;
-//   if (document.body.classList.contains("LT-1")){
-//     newTheme = "LT-2";
-//   }
-//   else if (document.body.classList.contains("LT-2")){
-//     newTheme = "LT-3";
-//   }
-//   else if (document.body.classList.contains("LT-3")){
-//     newTheme = "LT-1";
-//   }
-//   else {
-//     newTheme = "LT-1";
-//   }
-  
-//   applyTheme(newTheme);
-//   localStorage.setItem("theme", newTheme); // Store in localStorage
-// });
 
-// DTtheme.addEventListener("click", () => {
-//   let newTheme;
-//   if (document.body.classList.contains("DT-1")){
-//     newTheme = "DT-2";
-//   }
-//   else if (document.body.classList.contains("DT-2")){
-//     newTheme = "DT-3";
-//   }
-//   else if (document.body.classList.contains("DT-3")){
-//     newTheme = "DT-1";
-//   }
-//   else {
-//     newTheme = "DT-1";
-//   }
-
-//   applyTheme(newTheme);
-//   localStorage.setItem("theme", newTheme); // Store in localStorage
-// });
-const LTtheme = document.querySelector(".LT");  // Light theme button
-const DTtheme = document.querySelector(".DT"); // Dark theme button
-
-const LTClasses = ["LT-1", "LT-2", "LT-3", "LT-4", "LT-5"]; // Add more themes dynamically
-const DTClasses = ["DT-1", "DT-2", "DT-3", "DT-4", "DT-5"]; // Add more themes dynamically
-
-// Function to remove all theme classes and add the new one
 function applyTheme(theme, themeList) {
-  document.body.classList.remove(...LTClasses, ...DTClasses); // Remove all existing themes
+  document.body.classList.remove(...LTClasses, ...DTClasses); 
   document.body.classList.add(theme); // Add new theme
   localStorage.setItem("theme", theme); // Store in localStorage
 }
