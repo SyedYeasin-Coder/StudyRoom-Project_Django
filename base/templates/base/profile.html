@@ -32,9 +32,10 @@
 </script>
 <main class="profile-page layout layout--3">
   <div class="container">
-    <!-- Topics Start -->
-    {% include 'base/topic_component.html' %}
-    <!-- Topics End -->
+    <!-- Activities Start -->
+    {% include 'base/activity_component.html' %}
+    <!-- Activities End -->
+
 
     <!-- Room List Start -->
     <div class="roomList">
@@ -44,14 +45,14 @@
           <div class="avatar avatar--large active">
             <img src="{{ user.avatar.url|default:'/static/Images/avatar.svg' }}" />
 
-            <div class="avatar__overlay" {% if request.user == user %} onclick="openAvatarModal()"{% endif %}>
+            <div class="avatar__overlay" {% if "request.user==user" %} onclick="openAvatarModal()" {% endif %}>
               {% if request.user == user %}
               <span>Edit</span>
               {% endif %}
             </div>
           </div>
         </div>
- 
+
         <!-- Modal for Avatar Preview and Upload -->
         {% if request.user == user %}
         <div id="avatarModal" class="modal">
@@ -97,10 +98,10 @@
       {% include 'base/room_component.html' %}
     </div>
     <!-- Room List End -->
+    <!-- Topics Start -->
+    {% include 'base/topic_component.html' %}
+    <!-- Topics End -->
 
-    <!-- Activities Start -->
-    {% include 'base/activity_component.html' %}
-    <!-- Activities End -->
   </div>
 </main>
 {% endblock text %}

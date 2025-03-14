@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
 
 :root {
   --color-main       : #ffb74d;
@@ -157,7 +158,7 @@
 /*========== base styles ==========*/
 
 * {
-  font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+  font-family: "Quicksand", "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
     "Helvetica Neue", sans-serif;
   margin        : 0;
   padding       : 0;
@@ -578,8 +579,8 @@ a {
 }
 
 .layout--3>.container>div:first-child {
-  flex-basis: 18%;
-  max-width : 22.5rem;
+  flex-basis: 25%;
+
 }
 
 .layout--3>.container>div:nth-child(2) {
@@ -587,7 +588,10 @@ a {
 }
 
 .layout--3>.container>div:last-child {
-  flex-basis: 25%;
+  flex-basis: 18%;
+  max-width : 22.5rem;
+  background: var(--color-dark-light);
+  padding   : 1rem;
 }
 
 .layout--2>.container>div:first-child {
@@ -663,6 +667,23 @@ a {
   width        : 100%;
 }
 
+.form__group-child-container {
+  display: flex;
+  gap    : 1rem;
+}
+
+.form__group svg {
+  width : 2rem;
+  height: 2rem;
+  fill  : var(--color-light-gray);
+}
+
+.form__group img {
+  width : 2rem;
+  height: 2rem;
+  filter: invert(1);
+}
+
 .form__split {
   display: flex;
   gap    : 1.5rem;
@@ -677,14 +698,17 @@ a {
 .form__group input,
 .form__group textarea,
 .form__group select {
-  background   : transparent;
-  border       : 1px solid var(--color-dark-light);
-  padding      : 1rem;
-  border-radius: 3px;
-  width        : 100%;
-  color        : var(--color-light);
-  font-weight  : 500;
-  outline      : none;
+  border          : 1px solid var(--color-dark-light);
+  width           : 100%;
+  color           : var(--color-light);
+  font-weight     : 500;
+  outline         : none;
+  background-color: var(--color-dark-medium);
+  padding         : 1rem;
+  display         : flex;
+  align-items     : center;
+  gap             : 1rem;
+  border-radius   : 4px;
 }
 
 .form__group input:focus,
@@ -693,9 +717,22 @@ a {
 }
 
 .form__group textarea {
-  background: transparent;
-  height    : 10rem;
-  resize    : none;
+  background      : transparent;
+  height          : 10rem;
+  resize          : none;
+  border          : 1px solid var(--color-dark-light);
+  width           : 100%;
+  color           : var(--color-light);
+  font-weight     : 500;
+  outline         : none;
+  background-color: var(--color-dark-medium);
+  padding         : 1rem;
+  display         : flex;
+  align-items     : center;
+  gap             : 1rem;
+  border-radius   : 4px;
+  scrollbar-width : thin;
+  scrollbar-color : #888 rgba(0, 0, 0, 0.671);
 }
 
 .form__group select {
@@ -737,13 +774,31 @@ a {
 ================================*/
 
 .topics__header {
-  margin-bottom: 2rem;
+  display        : flex;
+  justify-content: center;
+  align-items    : center;
+  padding        : 1rem;
+  background     : var(--color-dark-light);
+  border-bottom  : 2px solid var(--color-dark-medium);
+  margin-bottom  : 2rem;
 }
 
+
 .topics__header h2 {
-  text-transform: uppercase;
-  font-weight   : 500;
-  color         : var(--color-dark-light);
+  background-color: var(--color-dark-light);
+  text-transform  : uppercase;
+  font-weight     : 500;
+  padding         : 1rem 1.5rem;
+  color           : var(--color-light);
+  letter-spacing  : 1px;
+  font-size       : 1.4rem;
+
+}
+
+.topics__header svg {
+  width : 2rem;
+  height: 2rem;
+  fill  : var(--color-light);
 }
 
 .topics__list {
@@ -836,10 +891,15 @@ a {
 }
 
 .roomListRoom__actions {
-  display    : flex;
-  align-items: flex-start;
-  gap        : 1rem;
-  position   : relative;
+  display         : flex;
+  align-items     : flex-start;
+  gap             : 1rem;
+  position        : relative;
+  padding         : 5px 1.5rem;
+  background-color: var(--color-dark-medium);
+  border-radius   : 5rem;
+  font-weight     : 500;
+  font-size       : 1.3rem;
 }
 
 .roomListRoom__actions span {
@@ -855,7 +915,7 @@ a {
 }
 
 .roomListRoom__content {
-  margin: 1rem 0;
+  margin: 2rem 0;
 }
 
 .roomListRoom__content a {
@@ -871,7 +931,7 @@ a {
 }
 
 .roomListRoom__meta {
-  border-top     : 1px solid var(--color-dark-medium);
+  border-top     : 2px solid var(--color-dark-medium);
   padding-top    : 1rem;
   display        : flex;
   align-items    : center;
@@ -879,12 +939,15 @@ a {
 }
 
 .roomListRoom__joined {
-  color      : var(--color-light-gray);
-  display    : flex;
-  align-items: center;
-  gap        : 1rem;
-  font-size  : 1.4rem;
-  font-weight: 500;
+  color           : var(--color-light-gray);
+  display         : flex;
+  align-items     : center;
+  gap             : 1rem;
+  padding         : 5px 1.5rem;
+  background-color: var(--color-dark-medium);
+  border-radius   : 5rem;
+  font-weight     : 500;
+  font-size       : 1.3rem;
 }
 
 .roomListRoom__joined svg {
@@ -911,6 +974,15 @@ a {
   overflow     : hidden;
 }
 
+.activities__header {
+  display        : flex;
+  justify-content: center;
+  align-items    : center;
+  padding        : 1rem 2rem;
+  background     : var(--color-dark-light);
+  border-bottom  : 2px solid var(--color-dark-medium);
+}
+
 .activities__header h2 {
   background-color: var(--color-dark-light);
   text-transform  : uppercase;
@@ -919,6 +991,18 @@ a {
   color           : var(--color-light);
   letter-spacing  : 1px;
   font-size       : 1.4rem;
+}
+
+.activities__header svg {
+  width : 2.5rem;
+  height: 2.5rem;
+  fill  : var(--color-light);
+}
+
+.activities__header svg>g>path {
+  width : 2.5rem;
+  height: 2.5rem;
+  fill  : var(--color-light);
 }
 
 .activities__box {
@@ -941,10 +1025,11 @@ a {
 
 .activities__boxContent {
   margin-left: 4.2rem;
+  font-size  : 1.4rem;
 }
 
-.activities__boxContent {
-  font-size: 1.4rem;
+.activities__boxContent p {
+  margin: 1rem 0;
 }
 
 .activities__boxContent a:hover {
@@ -1062,10 +1147,12 @@ a {
   text-transform: uppercase;
   color         : var(--color-dark-light);
   margin-bottom : 0.5rem;
+  border-bottom : 1px solid var(--color-dark-medium);
 }
 
 .profile-page .roomList__header {
   margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--color-dark-medium);
 }
 
 .profile-page .roomList__header h2 {
@@ -1182,6 +1269,14 @@ a {
 .room__info {
   display        : flex;
   justify-content: space-between;
+}
+
+.room__info span {
+  padding         : 5px 1.5rem;
+  background-color: var(--color-dark-medium);
+  border-radius   : 5rem;
+  font-weight     : 500;
+  font-size       : 1.3rem;
 }
 
 .room__info h3 {
