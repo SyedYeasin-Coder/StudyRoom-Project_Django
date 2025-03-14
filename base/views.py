@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from .models import Room, Topic, Message, User
@@ -7,6 +7,7 @@ from django.db.models import Q
 from .form import RoomForm, UserForm, MyUserCreationForm
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.core.files.storage import default_storage
 # Create your views here.
 
 def loginView(request):
@@ -96,20 +97,27 @@ def home(request):
     room_count = rooms.count()
     messages = Message.objects.filter(Q(room__topic__name__icontains=q))[:5]
     return render(request, 'base/Home.html', {"rooms" : rooms, "topics" : topics, "room_count" : room_count, "messages": messages})
-def room(request,pk):
+def room(request, pk):
     room = Room.objects.get(id=pk)
     messages = room.message_set.all()
     participants = room.participants.all()
+
     if request.method == "POST":
-        message = Message.objects.create(
-            user = request.user,
-            room = room,
-            body = request.POST.get('body')
-        )
-        room.participants.add(request.user)
+        body = request.POST.get('body', '').strip()
+        file = request.FILES.get('file')
+
+        if body or file:
+            message = Message.objects.create(
+                user=request.user,
+                room=room,
+                body=body,
+                file=file
+            )
+            room.participants.add(request.user)
+
         return redirect('room', pk=room.id)
 
-    return render(request, 'base/room.html', {"room" : room, "messages" : messages, 'participants': participants})  
+    return render(request, 'base/room.html', {"room": room, "messages": messages, 'participants': participants})
 
 
 @login_required(login_url='login')
@@ -158,13 +166,16 @@ def deleteRoom(request, pk):
 @login_required(login_url='login')
 def deleteMessage(request, pk):
     message = Message.objects.get(id=pk)
-    if request.user != message.user:
-        return HttpResponse('You can\'t delete this room!!')
-    if request.method == 'POST':
-        message.delete()
-        return redirect('home')
-    return render(request, 'base/delete.html', {'obj' : message})
 
+    if request.user != message.user:
+        return HttpResponse("You can't delete this message!")
+
+    if request.method == "POST":
+        message.delete()
+        next_url = request.GET.get("next") or request.META.get("HTTP_REFERER") or "home"
+        return redirect(next_url)  # Redirect to the stored page
+
+    return render(request, "base/delete.html", {"obj": message, 'page' : 'delete_message'})
 
 #! Mobile Menu
 

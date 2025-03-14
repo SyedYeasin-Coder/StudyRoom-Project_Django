@@ -87,63 +87,80 @@
                 <div class="thread__author">
                   <a href="{% url 'user-profile' message.user.id %}" class="thread__authorInfo">
                     <div class="avatar avatar--small">
-                      <img src="{{message.user.avatar.url}}" />
+                      <img src="{{ message.user.avatar.url }}" />
                     </div>
-                    <span>{{message.user.username}}</span>
+                    <span>{{ message.user.username }}</span>
                   </a>
-                  <span class="thread__date">{{message.created | timesince}} ago</span>
+                  <span class="thread__date">{{ message.created | timesince }} ago</span>
                 </div>
-
+        
                 {% if request.user == message.user %}
                 <a href="{% url 'delete-message' message.id %}">
                   <div class="thread__delete">
                     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
                       <title>remove</title>
-                      <path
-                        d="M27.314 6.019l-1.333-1.333-9.98 9.981-9.981-9.981-1.333 1.333 9.981 9.981-9.981 9.98 1.333 1.333 9.981-9.98 9.98 9.98 1.333-1.333-9.98-9.98 9.98-9.981z">
-                      </path>
+                      <path d="M27.314 6.019l-1.333-1.333-9.98 9.981-9.981-9.981-1.333 1.333 9.981 9.981-9.981 9.98 1.333 1.333 9.981-9.98 9.98 9.98 1.333-1.333-9.98-9.98 9.98-9.981z"></path>
                     </svg>
                   </div>
-                  {% endif %}
                 </a>
-              </div>
-              <!-- Message With Toggle -->
-              {% with message.body|striptags|safe as clean_text %}
-              <div class="thread__details">
-                <p id="{{ message.id }}" class="short-text">{{ clean_text }}</p>
-                {% if clean_text|length > 100 %}
-                <a href="javascript:void(0);" onclick="toggleMessage('{{ message.id }}')"
-                  id="toggle_{{ message.id }}">Show More</a>
                 {% endif %}
               </div>
-              {% endwith %}
+        
+              <!-- Message With Toggle -->
+              <div class="thread__details">
+                {% with message.body|striptags|safe as clean_text %}
+                  {% if clean_text %}
+                    <p id="{{ message.id }}" class="short-text">{{ clean_text }}</p>
+                    {% if clean_text|length > 100 %}
+                      <a href="javascript:void(0);" onclick="toggleMessage('{{ message.id }}')" id="toggle_{{ message.id }}">Show More</a>
+                    {% endif %}
+                  {% endif %}
+                {% endwith %}
+        
+                <!-- Display Uploaded Files (Properly Styled) -->
+                {% if message.file %}
+                  <div class="message__file">
+                    {% if message.file.url|lower|slice:'-4:' == ".png" or message.file.url|lower|slice:'-4:' == ".jpg" or message.file.url|lower|slice:'-5:' == ".jpeg" or message.file.url|lower|slice:'-4:' == ".gif" %}
+                      <img src="{{ message.file.url }}" alt="Uploaded Image" class="uploaded-image">
+                    {% else %}
+                      <p class="file-link"><a href="{{ message.file.url }}" download>📂{{message.file.name|cut:"messages/" }}</a></p>
+                    {% endif %}
+                  </div>
+                {% endif %}
+              </div>
             </div>
             {% endfor %}
           </div>
           <div class="room__message">
             {% if request.user.is_authenticated %}
-            <form action="" method="POST">
-              {% csrf_token %}
-              <input name="body" placeholder="Write your message here..." />
+            <form id="messageForm" action="" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="text" name="body" id="messageInput" placeholder="Write your message here..." onkeydown="handleEnter(event)">
+                <input type="file" name="file" id="fileInput" style="display: none;">
+                
+                <div class="file-upload" onclick="document.getElementById('fileInput').click()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
+                        <path d="M 25 2 C 12.309295 2 2 12.309295 2 25 C 2 37.690705 12.309295 48 25 48 C 37.690705 48 48 37.690705 48 25 C 48 12.309295 37.690705 2 25 2 z M 25 4 C 36.609824 4 46 13.390176 46 25 C 46 36.609824 36.609824 46 25 46 C 13.390176 46 4 36.609824 4 25 C 4 13.390176 13.390176 4 25 4 z M 24 13 L 24 24 L 13 24 L 13 26 L 24 26 L 24 37 L 26 37 L 26 26 L 37 26 L 37 24 L 26 24 L 26 13 L 24 13 z"/>
+                    </svg>
+                </div>
             </form>
-            {% else %}
-            <div class="PLFWM">
-              <h3>Please <a href="{% url 'login' %}">Login</a> first to write a message</h3>
+              {% else %}
+              <div class="PLFWM">
+                <h3>Please <a href="{% url 'login' %}">Login</a> first to write a message</h3>
+              </div>
+              {% endif %}
             </div>
-            {% endif %}
-          </div>
+        </div>        
+        
         </div>
       </div>
-
-
-    </div>
     <!-- Room End -->
 
     <!--   Start -->
     <div class="participants">
-      <h3 class="participants__top">
-        Participants <span>({{participants.count}} Joined)</span>
-      </h3>
+      <div class="participants__top">
+        <h3>Participants</h3> <span>({{participants.count}} Joined)</span>
+      </div>
       <div class="participants__list scroll">
         {% for participant in participants %}
         <a href="{% url 'user-profile' participant.id %}" class="participant">

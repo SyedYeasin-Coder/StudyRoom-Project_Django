@@ -120,3 +120,15 @@ DTtheme.addEventListener("click", () => {
   applyTheme(newTheme, DTClasses);
 });
 
+function previewFile(event) {
+  const file = event.target.files[0];
+  if (file) {
+      document.getElementById('fileName').innerText = `Selected file: ${file.name}`;
+  }
+}
+function handleEnter(event) {
+  if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault(); // Prevent new line
+      document.getElementById("messageForm").submit(); // Submit form
+  }
+}

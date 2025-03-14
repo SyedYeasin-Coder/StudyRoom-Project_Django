@@ -1230,15 +1230,14 @@ a {
 }
 
 .room__header {
-  max-height    : 30vh;
-  overflow-y    : auto;
-  position      : absolute;
-  width         : calc(100% - 3.5rem);
-  background    : var(--color-dark);
-  z-index       : 999;
-  top           : 4.4rem;
-  padding-top   : 2rem;
-  padding-bottom: 1rem;
+  max-height       : 30vh;
+  overflow-y       : auto;
+  /* position      : absolute; */
+  background       : var(--color-dark);
+  z-index          : 999;
+  top              : 4.4rem;
+  padding-top      : 2rem;
+  padding-bottom   : 1rem;
 }
 
 @media screen and (max-width: 500px) {
@@ -1252,8 +1251,10 @@ a {
   padding-left  : 2rem;
   padding-right : 2rem;
   height        : 80.5vh;
-  /* overflow-y : auto; */
+  overflow-y    : auto;
   padding-bottom: 0;
+  display       : flex;
+  flex-direction: column;
 }
 
 @media screen and (max-width: 500px) {
@@ -1277,6 +1278,8 @@ a {
   border-radius   : 5rem;
   font-weight     : 500;
   font-size       : 1.3rem;
+  display         : flex;
+  align-items     : center;
 }
 
 .room__info h3 {
@@ -1316,10 +1319,12 @@ a {
 }
 
 .room__conversation {
-  margin-top   : 1rem;
-  margin-bottom: 4rem;
-  height       : 64%;
-  position     : relative;
+  /* margin-top   : 1rem; */
+  /* margin-bottom: 4rem; */
+  display       : flex;
+  height        : 65%;
+  width         : 100%;
+  flex-direction: column;
 }
 
 .threads h3 {
@@ -1329,12 +1334,15 @@ a {
 }
 
 .threads {
-  background   : var(--color-bg);
-  border-radius: 0.7rem;
-  overflow-y   : auto;
-  height       : 100%;
-  margin-top   : 28vh;
-  padding      : 0 2rem 4rem 2rem;
+  background      : var(--color-bg);
+  border-radius   : 0.7rem;
+  overflow-y      : auto;
+  height          : 100%;
+  /* margin-top   : 28vh; */
+  padding         : 1rem 2rem;
+  /* position     : absolute; */
+  top             : auto;
+  width           : 100%;
 }
 
 .thread {
@@ -1373,29 +1381,33 @@ a {
 }
 
 .room__message {
-  padding   : 0rem;
-  position  : absolute;
-  z-index   : 111;
-  bottom    : 0;
-  left      : 0;
-  right     : 0;
-  background: transparent;
-}
-
-.room__message>form>input {
-  resize          : none;
+  z-index         : 111;
   background-color: var(--color-dark-light);
   color           : var(--color-light);
   border          : none;
   outline         : none;
   border-radius   : 0.7rem;
-  height          : 4.5rem;
+  height          : 5.5rem;
   width           : 100%;
   margin-top      : -1rem;
-  padding         : 1.2rem;
-  font-size       : 1.4rem;
+  padding         : 0 1rem;
+  font-size       : 2rem;
   font-weight     : 500;
-  position        : relative;
+}
+
+.room__message>form>input {
+  background: var(--color-dark-light);
+  border    : none;
+  width     : 100%;
+  height    : 80%;
+  margin    : 0 1rem;
+  padding   : 0 0.5rem;
+}
+
+.room__message>form>input:focus {
+  border : none;
+  outline: none;
+  color  : var(--color-light-gray);
 }
 
 .room__message>form>input::placeholder {
@@ -1409,8 +1421,10 @@ a {
 }
 
 .participants__top {
-  justify-content: flex-start;
-  gap            : 0.5rem;
+  gap            : 5rem;
+  display        : flex;
+  justify-content: center;
+  align-items    : center;
 }
 
 .participants__list {
@@ -1601,4 +1615,41 @@ li {
   left      : 50%;
   transform : translate(-50%, -50%);
   transition: .3s ease;
+}
+
+.file-upload {
+  width          : 30px;
+  height         : 30px;
+  display        : flex;
+  align-items    : center;
+  justify-content: center;
+  cursor         : pointer;
+}
+
+.file-upload svg {
+  fill: var(--color-light);
+}
+
+.for__group {
+  display: inline;
+}
+
+.for__group-container {
+  display: flex;
+  gap    : 1rem;
+}
+
+.alerting {
+  background-color: var(--color-error);
+}
+
+#messageForm {
+  display        : flex;
+  height         : 100%;
+  justify-content: center;
+  align-items    : center;
+}
+
+.uploaded-image{
+  width: 150px;
 }
