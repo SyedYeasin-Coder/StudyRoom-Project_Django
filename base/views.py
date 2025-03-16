@@ -93,10 +93,11 @@ def home(request):
         Q(name__icontains=q) |
         Q(description__icontains=q) 
         )
-    topics = Topic.objects.all()[:4]
+    topics = Topic.objects.all()
     room_count = rooms.count()
     messages = Message.objects.filter(Q(room__topic__name__icontains=q))[:5]
     return render(request, 'base/Home.html', {"rooms" : rooms, "topics" : topics, "room_count" : room_count, "messages": messages})
+
 def room(request, pk):
     room = Room.objects.get(id=pk)
     messages = room.message_set.all()
@@ -104,20 +105,26 @@ def room(request, pk):
 
     if request.method == "POST":
         body = request.POST.get('body', '').strip()
-        file = request.FILES.get('file')
+        files = request.FILES.getlist('file')  # Make sure to get files with the correct key ('file')
 
-        if body or file:
+        if body or files:
             message = Message.objects.create(
                 user=request.user,
                 room=room,
-                body=body,
-                file=file
+                body=body
             )
+
+            # If files exist, handle them and associate with the message
+            for file in files:
+                message.file = file
+                message.save()
+
             room.participants.add(request.user)
 
         return redirect('room', pk=room.id)
 
     return render(request, 'base/room.html', {"room": room, "messages": messages, 'participants': participants})
+
 
 
 @login_required(login_url='login')

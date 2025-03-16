@@ -80,15 +80,15 @@ colorThemeMenu.addEventListener("click", () => {
 })
 
 
-const LTtheme = document.querySelector(".LT");  
-const DTtheme = document.querySelector(".DT"); 
+const LTtheme = document.querySelector(".LT");
+const DTtheme = document.querySelector(".DT");
 
-const LTClasses = ["LT-1", "LT-2", "LT-3", "LT-4", "LT-5"]; 
-const DTClasses = ["DT-1", "DT-2", "DT-3", "DT-4", "DT-5"]; 
+const LTClasses = ["LT-1", "LT-2", "LT-3", "LT-4", "LT-5"];
+const DTClasses = ["DT-1", "DT-2", "DT-3", "DT-4", "DT-5"];
 
 
 function applyTheme(theme, themeList) {
-  document.body.classList.remove(...LTClasses, ...DTClasses); 
+  document.body.classList.remove(...LTClasses, ...DTClasses);
   document.body.classList.add(theme); // Add new theme
   localStorage.setItem("theme", theme); // Store in localStorage
 }
@@ -123,12 +123,168 @@ DTtheme.addEventListener("click", () => {
 function previewFile(event) {
   const file = event.target.files[0];
   if (file) {
-      document.getElementById('fileName').innerText = `Selected file: ${file.name}`;
+    document.getElementById('fileName').innerText = `Selected file: ${file.name}`;
   }
 }
 function handleEnter(event) {
   if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault(); // Prevent new line
-      document.getElementById("messageForm").submit(); // Submit form
+    event.preventDefault(); // Prevent new line
+    document.getElementById("messageForm").submit(); // Submit form
   }
 }
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  const fileInput = document.getElementById("fileInput");
+  const fileHolder = document.querySelector(".fileInput-holder");
+  let selectedFiles = [];
+
+  fileInput.addEventListener("change", function (event) {
+    handleFileSelect(event.target.files);
+  });
+
+  function handleFileSelect(files) {
+    if (files.length === 0) return;
+    fileHolder.style.display = "flex"; // Show file holder
+
+    for (let i = 0; i < files.length; i++) {
+      let file = files[i];
+
+      // Prevent duplicate file selection
+      if (selectedFiles.some(f => f.name === file.name)) continue;
+
+      selectedFiles.push(file);
+
+      let fileContainer = document.createElement("div");
+      fileContainer.classList.add("EachInput");
+
+      let removeButton = document.createElement("div");
+      removeButton.classList.add("fileUpload-remove");
+      removeButton.innerHTML = `<svg class="actionBarIcon" width="24" height="24" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M14.25 1c.41 0 .75.34.75.75V3h5.25c.41 0 .75.34.75.75v.5c0 .41-.34.75-.75.75H3.75A.75.75 0 0 1 3 4.25v-.5c0-.41.34-.75.75-.75H9V1.75c0-.41.34-.75.75-.75h4.5Z"></path><path fill="currentColor" fill-rule="evenodd" d="M5.06 7a1 1 0 0 0-1 1.06l.76 12.13a3 3 0 0 0 3 2.81h8.36a3 3 0 0 0 3-2.81l.75-12.13a1 1 0 0 0-1-1.06H5.07ZM11 12a1 1 0 1 0-2 0v6a1 1 0 1 0 2 0v-6Zm3-1a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1Z" clip-rule="evenodd" class=""></path></svg>`;
+
+      let editButton = document.createElement("div");
+      editButton.classList.add("fileUpload-edit");
+      editButton.innerHTML = `<svg class="editIcon" width="24" height="24" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M2 17.25V21h3.75l11.06-11.06-3.75-3.75L2 17.25ZM22.41 5.34l-3.75-3.75a1.5 1.5 0 0 0-2.12 0L14.4 3.73l5.66 5.66 2.34-2.34a1.5 1.5 0 0 0 0-2.12Z"></path></svg>`;
+
+      let fileName = document.createElement("p");
+      fileName.classList.add("fileUpload-name");
+      fileName.textContent = file.name;
+
+      let filePreview = document.createElement("img");
+      filePreview.classList.add("fileUpload-img");
+
+      let fileType = file.type;
+      let fileExtension = file.name.split(".").pop().toLowerCase();
+
+      let imageTypes = ["image/gif", "image/jpeg", "image/jpg", "image/png", "image/svg+xml"];
+
+      if (imageTypes.includes(fileType)) {
+        let reader = new FileReader();
+        reader.onload = function (e) {
+          filePreview.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        let staticUrl = "/static/images/icons/";
+        let fileIcons = {
+          "pdf": staticUrl + "pdf_icon.png",
+          "docx": staticUrl + "docx_icon.png",
+          "xlsx": staticUrl + "xlsx_icon.png",
+          "txt": staticUrl + "txt_icon.png",
+          "py": staticUrl + "py_icon.png",
+          "c": staticUrl + "c_icon.png",
+          "cpp": staticUrl + "cpp_icon.png",
+          "js": staticUrl + "js_icon.png",
+          "html": staticUrl + "html_icon.png",
+          "css": staticUrl + "css_icon.png",
+          "zip": staticUrl + "zip_icon.png",
+          "mp3": staticUrl + "mp3_icon.png",
+          "mp4": staticUrl + "mp4_icon.png"
+        };
+
+        filePreview.src = fileIcons[fileExtension] || staticUrl + "default_file_icon.png";
+      }
+
+      removeButton.addEventListener("click", function () {
+        fileContainer.remove();
+        selectedFiles = selectedFiles.filter(f => f.name !== file.name);
+        if (selectedFiles.length === 0) {
+          fileInput.value = "";
+          fileHolder.style.display = "none";
+        }
+      });
+
+      editButton.addEventListener("click", function () {
+        openEditModal(fileName, file);
+      });
+
+      fileContainer.appendChild(filePreview);
+      fileContainer.appendChild(fileName);
+      fileContainer.appendChild(removeButton);
+      fileContainer.appendChild(editButton);
+      fileHolder.appendChild(fileContainer);
+    }
+  }
+
+ // Open Edit Modal
+function openEditModal(fileNameElement, fileObj) {
+  const modal = document.getElementById("editFileModal");
+  const input = document.getElementById("editFileNameInput");
+  const saveButton = document.getElementById("saveFileName");
+  const cancelButton = document.getElementById("cancelEditButton");
+
+  // Remove the file extension before displaying the name
+  const baseFileName = fileNameElement.textContent.split(".").slice(0, -1).join("."); // Remove extension
+  input.value = baseFileName; // Pre-fill with the current base file name (without extension)
+  modal.style.display = "flex";
+
+  // **Ensure previous event listeners are removed before adding a new one**
+  saveButton.replaceWith(saveButton.cloneNode(true));
+  cancelButton.replaceWith(cancelButton.cloneNode(true));
+
+  // Get the new cloned buttons
+  const newSaveButton = document.getElementById("saveFileName");
+  const newCancelButton = document.getElementById("cancelEditButton");
+
+  // Save button should rename the file and close the modal
+  newSaveButton.addEventListener("click", function (event) {
+      event.preventDefault(); // Prevent unintended behavior
+      saveFileName(fileNameElement, input.value, fileObj);
+  });
+
+  // Cancel button should ONLY close the modal and prevent any unintended behavior
+  newCancelButton.addEventListener("click", function (event) {
+      event.preventDefault();  // Prevent form submission
+      event.stopPropagation(); // Stop bubbling up any event
+      console.log("Cancel button clicked");
+      closeEditModal(); // Just close modal, do NOT save anything
+  });
+}
+
+// Close Edit Modal
+window.closeEditModal = function () {
+  document.getElementById("editFileModal").style.display = "none";
+}
+
+// Save File Name
+function saveFileName(fileNameElement, newName, fileObj) {
+  if (newName.trim() !== "") {
+      let fileExtension = fileObj.name.split('.').pop(); // Extract original extension
+      let renamedFile = new File([fileObj], newName + "." + fileExtension, { type: fileObj.type });
+
+      // Update the file input with the new file
+      let dataTransfer = new DataTransfer();
+      dataTransfer.items.add(renamedFile);
+      document.getElementById("fileInput").files = dataTransfer.files;
+
+      // Update the displayed filename
+      fileNameElement.textContent = newName + "." + fileExtension;
+  }
+  closeEditModal(); // Close the modal after saving
+}
+
+});
+
+
+
+

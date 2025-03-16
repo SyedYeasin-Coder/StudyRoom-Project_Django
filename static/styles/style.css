@@ -2,17 +2,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
 
 :root {
-  --color-main       : #ffb74d;
-  --color-main-light : #fff3e0;
-  --color-dark       : #5d4037;
-  --color-dark-medium: #795548;
-  --color-dark-light : #a1887f;
-  --color-light      : #fafafa;
-  --color-gray       : #bdbdbd;
-  --color-light-gray : #e0e0e0;
-  --color-bg         : #424242;
-  --color-success    : #66bb6a;
-  --color-error      : #e57373;
+  --color-main         : #ffb74d;
+  --color-main-light   : #fff3e0;
+  --color-dark         : #5d4037;
+  --color-dark-medium  : #795548;
+  --color-dark-light   : #a1887f;
+  --color-light        : #fafafa;
+  --color-gray         : #bdbdbd;
+  --color-light-gray   : #e0e0e0;
+  --color-bg           : #424242;
+  --color-success      : #66bb6a;
+  --color-error        : #e57373;
+  --opacity-white-8    : hsl(0 calc(1*0%) 100% /0.0784313725490196);
+  --opacity-white-8-hsl: 0 calc(var(--saturation-factor, 1)* 0%) 100%;
 }
 
 .LT-1 {
@@ -151,8 +153,8 @@
   --color-gray       : #8d8d8d;
   --color-light-gray : #bdbdbd;
   --color-bg         : #1b1b1b;
-  --color-success    : #81c784;
-  --color-error      : #e57373;
+  --color-success    : #1bdb25;
+  --color-error      : #dd3d3d;
 }
 
 /*========== base styles ==========*/
@@ -482,7 +484,7 @@ a {
   display         : flex;
   align-items     : center;
   gap             : 1rem;
-  border-radius   : 4px;
+  border-radius   : 4rem;
 }
 
 .header__search svg {
@@ -588,10 +590,11 @@ a {
 }
 
 .layout--3>.container>div:last-child {
-  flex-basis: 18%;
-  max-width : 22.5rem;
-  background: var(--color-dark-light);
-  padding   : 1rem;
+  flex-basis   : 18%;
+  max-width    : 22.5rem;
+  background   : var(--color-dark-light);
+  padding      : 1rem;
+  border-radius: 5px;
 }
 
 .layout--2>.container>div:first-child {
@@ -749,7 +752,8 @@ a {
 .form__action {
   display        : flex;
   justify-content: flex-end;
-  gap            : 3rem;
+  gap            : 2rem;
+  margin-top     : 2rem;
 }
 
 .form__hide {
@@ -881,6 +885,7 @@ a {
   display        : flex;
   justify-content: space-between;
   align-items    : center;
+  margin         : 1rem 0;
 }
 
 .roomListRoom__author {
@@ -915,10 +920,12 @@ a {
 }
 
 .roomListRoom__content {
-  margin: 2rem 0;
+  margin : 3rem 0;
+  color  : var(--color-light);
+  display: block;
 }
 
-.roomListRoom__content a {
+.roomListRoom__content h3 {
   font-size    : 2rem;
   font-weight  : 500;
   margin-bottom: 1.5rem;
@@ -926,13 +933,19 @@ a {
   transition   : all 0.3s ease-in-out;
 }
 
-.roomListRoom__content a:hover {
+.roomListRoom__content:hover h3 {
   color: var(--color-main);
+}
+
+.roomListRoom__content p {
+  background-color: var(--color-dark-medium);
+  border-radius   : 0.5rem;
+  padding         : 1rem 0.5rem;
 }
 
 .roomListRoom__meta {
   border-top     : 2px solid var(--color-dark-medium);
-  padding-top    : 1rem;
+  padding-top    : 2rem;
   display        : flex;
   align-items    : center;
   justify-content: space-between;
@@ -1170,6 +1183,7 @@ a {
   border-radius: 0.7rem;
   overflow     : hidden;
   position     : relative;
+  height       : 82.5vh;
 }
 
 @media screen and (max-width: 900px) {
@@ -1230,14 +1244,13 @@ a {
 }
 
 .room__header {
-  max-height       : 30vh;
-  overflow-y       : auto;
-  /* position      : absolute; */
-  background       : var(--color-dark);
-  z-index          : 999;
-  top              : 4.4rem;
-  padding-top      : 2rem;
-  padding-bottom   : 1rem;
+  max-height    : 30vh;
+  overflow-y    : auto;
+  background    : var(--color-dark);
+  z-index       : 1;
+  top           : 4.4rem;
+  padding-top   : 2rem;
+  padding-bottom: 1rem;
 }
 
 @media screen and (max-width: 500px) {
@@ -1250,7 +1263,7 @@ a {
 .room__box {
   padding-left  : 2rem;
   padding-right : 2rem;
-  height        : 80.5vh;
+  height        : 75.5vh;
   overflow-y    : auto;
   padding-bottom: 0;
   display       : flex;
@@ -1334,15 +1347,15 @@ a {
 }
 
 .threads {
-  background      : var(--color-bg);
-  border-radius   : 0.7rem;
-  overflow-y      : auto;
-  height          : 100%;
-  /* margin-top   : 28vh; */
-  padding         : 1rem 2rem;
-  /* position     : absolute; */
-  top             : auto;
-  width           : 100%;
+  background         : var(--color-bg);
+  border-radius      : 0.7rem;
+  overflow-y         : auto;
+  height             : 100%;
+  /* margin-top      : 28vh; */
+  padding            : 1rem 2rem;
+  /* position        : absolute; */
+  /* top             : auto; */
+  width              : 100%;
 }
 
 .thread {
@@ -1376,8 +1389,11 @@ a {
 }
 
 .thread__details {
-  font-size : 1.4rem;
-  margin-top: 0.5rem;
+  font-size    : 1.4rem;
+  margin-top   : 0.5rem;
+  background   : var(--color-dark-medium);
+  padding      : 1rem;
+  border-radius: 1rem;
 }
 
 .room__message {
@@ -1390,7 +1406,6 @@ a {
   height          : 5.5rem;
   width           : 100%;
   margin-top      : -1rem;
-  padding         : 0 1rem;
   font-size       : 2rem;
   font-weight     : 500;
 }
@@ -1414,10 +1429,12 @@ a {
   color: var(--color-light-gray);
 }
 
+.participants__top h3 {
+  color: var(--color-main);
+}
+
 .participants__top span {
-  color         : var(--color-main);
-  font-size     : 1.3rem;
-  text-transform: none;
+  color: var(--color-light);
 }
 
 .participants__top {
@@ -1429,9 +1446,9 @@ a {
 
 .participants__list {
   padding       : 2rem;
-  height        : 82.5vh;
-  overflow-y    : scroll;
-  padding-bottom: 0;
+  overflow-y    : auto;
+  height        : 100%;
+  padding-bottom: 4rem;
 }
 
 .participant {
@@ -1439,6 +1456,7 @@ a {
   align-items  : center;
   gap          : 1.5rem;
   margin-bottom: 2rem;
+  padding      : 1rem;
 }
 
 .participant p {
@@ -1457,6 +1475,7 @@ a {
   overflow     : hidden;
   white-space  : nowrap;
   text-overflow: ellipsis;
+  margin       : 0;
 }
 
 .PLFWM {
@@ -1618,17 +1637,31 @@ li {
 }
 
 .file-upload {
-  width          : 30px;
-  height         : 30px;
-  display        : flex;
-  align-items    : center;
-  justify-content: center;
-  cursor         : pointer;
+  width           : 30px;
+  height          : 30px;
+  display         : inline-flex;
+  align-items     : center;
+  justify-content : center;
+  cursor          : pointer;
+  background-color: var(--color-light);
+  border-radius   : 50%;
+  border          : 2px solid transparent;
+  transition      : background-color 0.3s ease, fill 0.3s ease;
 }
 
 .file-upload svg {
+  fill      : black;
+  transition: fill 0.3s ease;
+}
+
+.file-upload:hover {
+  background-color: var(--color-dark) !important;
+}
+
+.file-upload:hover svg {
   fill: var(--color-light);
 }
+
 
 .for__group {
   display: inline;
@@ -1648,8 +1681,189 @@ li {
   height         : 100%;
   justify-content: center;
   align-items    : center;
+  padding        : 0 1rem;
+  position       : relative;
 }
 
-.uploaded-image{
+.uploaded-image {
   width: 150px;
+}
+
+input:-webkit-autofill {
+  box-shadow             : 0 0 0px 1000px var(--color-light-gray) inset !important;
+  -webkit-text-fill-color: var(--color-bg) !important;
+  border-radius          : 0.5rem;
+  transition             : box-shadow 0.3s ease-in-out;
+}
+
+#messageInput:-webkit-autofill,
+.header__search>label>input:-webkit-autofill {
+  box-shadow             : 0 0 0px 1000px var(--color-dark) inset !important;
+  -webkit-text-fill-color: var(--color-light) !important;
+  border-radius          : 0.5rem;
+  transition             : box-shadow 0.3s ease-in-out;
+}
+
+.createRoom {
+  display  : none;
+  color    : var(--color-bg);
+  font-size: 1.6rem;
+}
+
+.circle {
+  display         : flex;
+  background-color: var(--color-main);
+  width           : 50px;
+  height          : 50px;
+  transition      : all 0.4s ease;
+  justify-content : center;
+  align-items     : center;
+}
+
+.circle:hover svg {
+  fill : var(--color-bg);
+  width: 20px;
+}
+
+.circle {
+  border-radius: 100%;
+}
+
+.circle:hover {
+  border-radius   : 1rem;
+  width           : 170px;
+  gap             : 1rem;
+  background-color: var(--color-success);
+  cursor          : pointer;
+}
+
+.circle:hover .createRoom {
+  display: inline;
+}
+
+/*==============================
+=>  Styles For Media Files
+================================*/
+
+.fileInput-holder {
+  min-height      : 350px;
+  position        : absolute;
+  width           : 100%;
+  bottom          : 0;
+  z-index         : -100;
+  margin          : 0;
+  padding         : 0;
+  background-color: var(--color-dark-light);
+  display         : none;
+  border-radius   : 1rem;
+}
+
+.EachInput {
+  display         : block;
+  background-color: var(--color-dark-medium);
+  height          : 200px;
+  margin          : 1rem;
+  position        : relative;
+  border-radius   : .5rem .5rem 0rem 0rem;
+}
+
+.EachInput svg {
+  color: var(--color-error);
+}
+
+.fileUpload {
+  position        : absolute;
+  top             : 0;
+  right           : 0;
+  display         : flex;
+  justify-content : flex-end;
+  padding         : 0rem 0rem .25rem .25rem;
+  background-color: var(--color-dark);
+}
+
+.fileUpload-name {
+  color           : #fff;
+  display         : block;
+  width           : 100%;
+  min-height      : 55px;
+  padding         : 5px;
+  font-size       : 14px;
+  text-align      : center;
+  word-break      : break-word;
+  overflow-wrap   : break-word;
+  background-color: var(--color-dark);
+  margin-bottom   : 0;
+  border-radius   : 0 0 .5rem .5rem;
+}
+
+.fileUpload-img {
+  width        : 100%;
+  height       : 100%;
+  object-fit   : cover;
+  border       : 5px solid var(--color-dark);
+  border-radius: .5rem .5rem 0rem 0rem;
+}
+
+.file-icon {
+  margin-right  : 10px;
+  vertical-align: middle;
+  width         : 50px;
+  height        : 50px;
+}
+
+.file-link {
+  font-size      : 16px;
+  font-weight    : bold;
+  color          : var(--color-light-gray);
+  text-decoration: none;
+  margin         : 0;
+}
+
+.message__file img {
+  margin-top   : 1rem;
+  border-radius: 0.5rem;
+}
+
+/*==============================
+=>  ChatGPT Styles
+================================*/
+/* Remove & Edit Buttons */
+.fileUpload-remove,
+.fileUpload-edit {
+  display         : flex;
+  align-items     : center;
+  justify-content : center;
+  height          : 34px;
+  cursor          : pointer;
+  position        : absolute;
+  padding-bottom  : 5px;
+  z-index         : 100;
+  width           : max-content;
+  border-radius   : 0.5rem;
+  background-color: var(--color-dark);
+  transition      : all 0.2s ease-in-out;
+}
+
+.fileUpload-remove {
+  top  : 0;
+  right: 0;
+
+}
+
+.fileUpload-edit {
+  top : 0;
+  left: 0;
+}
+
+.fileUpload-remove:hover,
+.fileUpload-edit:hover {
+  scale: 1.1;
+}
+
+/* Edit Modal Styles */
+.editFileModal {
+  padding: 0;
+  min-height: 0;
+  position:unset;
+  transform: none;
 }

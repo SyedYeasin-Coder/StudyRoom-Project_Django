@@ -11,10 +11,13 @@
         <span>{{room.created | timesince}} ago</span>
       </div>
     </div>
-    <div class="roomListRoom__content">
-      <a href="{% url 'room' room.id %}">{{room.name}}</a>
+    <a href="{% url 'room' room.id %}" class="roomListRoom__content">
+      <h3>{{room.name}}</h3>
+      
+      {% if room.description != "" %}
       <p>{{room.description}}</p>
-    </div>
+      {% endif %}
+    </a>
     <div class="roomListRoom__meta">
       <p class="roomListRoom__topic">{{room.topic.name}}</p>
       <a href="{% url 'room' room.id %}" class="roomListRoom__joined">

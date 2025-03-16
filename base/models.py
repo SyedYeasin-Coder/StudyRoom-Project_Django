@@ -1,3 +1,4 @@
+import os
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
@@ -33,12 +34,16 @@ class Room(models.Model):
 
     def __str__(self):
         return str(self.name)
-    
+
+def upload_to(instance, filename):
+    """Keep the original file name without changing the extension."""
+    name, ext = os.path.splitext(filename)  # Split filename from extension
+    return os.path.join('messages/', filename)  # Save with original name and extension intact    
 class Message(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     body = models.TextField()
-    file = models.FileField(upload_to='messages/', null=True, blank=True)
+    file = models.FileField(upload_to=upload_to, null=True, blank=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
@@ -47,3 +52,8 @@ class Message(models.Model):
 
     def __str__(self):
         return self.body[0:50]
+    def delete(self, *args, **kwargs):
+        if self.file: 
+            if os.path.isfile(self.file.path): 
+                os.remove(self.file.path)  
+        super().delete(*args, **kwargs) 
