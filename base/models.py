@@ -7,12 +7,12 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
     name = models.CharField(max_length=200, null=True)
     email = models.EmailField(unique=True ,null=True)
-    bio = models.TextField(null=True)
+    bio = models.TextField(null=True, blank=True)
 
     avatar = models.ImageField(null=True, default="avatar.svg")
     
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['username']
 
 class Topic(models.Model):
     name = models.CharField(max_length=200)
@@ -35,15 +35,10 @@ class Room(models.Model):
     def __str__(self):
         return str(self.name)
 
-def upload_to(instance, filename):
-    """Keep the original file name without changing the extension."""
-    name, ext = os.path.splitext(filename)  # Split filename from extension
-    return os.path.join('messages/', filename)  # Save with original name and extension intact    
 class Message(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
-    body = models.TextField()
-    file = models.FileField(upload_to=upload_to, null=True, blank=True)
+    body = models.TextField(blank=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
@@ -51,9 +46,19 @@ class Message(models.Model):
         ordering = ['-updated', '-created']
 
     def __str__(self):
-        return self.body[0:50]
+        return self.body[:50] if self.body else "File Upload"
     def delete(self, *args, **kwargs):
-        if self.file: 
-            if os.path.isfile(self.file.path): 
-                os.remove(self.file.path)  
-        super().delete(*args, **kwargs) 
+        """Delete all associated files when a message is deleted"""
+        for file in self.files.all():
+            file.delete()  # This calls the delete method in MessageFile
+        super().delete(*args, **kwargs)
+
+class MessageFile(models.Model):
+    message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name='files')
+    file = models.FileField(upload_to='messages/')
+
+    def delete(self, *args, **kwargs):
+        if self.file:
+            if os.path.isfile(self.file.path):
+                os.remove(self.file.path)
+        super().delete(*args, **kwargs)

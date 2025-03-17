@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-from .models import Room, Topic, Message, User
+from .models import Room, Topic, Message, User, MessageFile
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
 from .form import RoomForm, UserForm, MyUserCreationForm
@@ -105,25 +105,28 @@ def room(request, pk):
 
     if request.method == "POST":
         body = request.POST.get('body', '').strip()
-        files = request.FILES.getlist('file')  # Make sure to get files with the correct key ('file')
-
+        files = request.FILES.getlist('file')  
+        
         if body or files:
             message = Message.objects.create(
                 user=request.user,
                 room=room,
                 body=body
             )
+            uploaded_files = set()
 
-            # If files exist, handle them and associate with the message
             for file in files:
-                message.file = file
-                message.save()
+                if file.name not in uploaded_files:
+                    MessageFile.objects.create(message=message, file=file)
+                    uploaded_files.add(file.name)
 
             room.participants.add(request.user)
 
         return redirect('room', pk=room.id)
 
     return render(request, 'base/room.html', {"room": room, "messages": messages, 'participants': participants})
+
+
 
 
 

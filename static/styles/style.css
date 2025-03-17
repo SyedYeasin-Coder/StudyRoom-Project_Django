@@ -1867,3 +1867,9 @@ input:-webkit-autofill {
   position:unset;
   transform: none;
 }
+
+.message__file{
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}

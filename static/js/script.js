@@ -28,13 +28,16 @@ function openAvatarModal() {
 }
 
 function closeAvatarModal() {
-  document.getElementById("avatarModal").style.display = "none";
+  const modal = document.getElementById('avatarModal'); 
+  if (modal) {
+    modal.style.display = 'none';
+  }
 }
-// Prevent modal from being shown on page load
+
 document.addEventListener("DOMContentLoaded", function () {
-  closeAvatarModal(); // Hide modal initially
+  closeAvatarModal(); 
 });
-// Preview the uploaded avatar image
+
 function previewAvatar(event) {
   const reader = new FileReader();
   reader.onload = function () {
@@ -126,18 +129,55 @@ function previewFile(event) {
     document.getElementById('fileName').innerText = `Selected file: ${file.name}`;
   }
 }
-function handleEnter(event) {
-  if (event.key === "Enter" && !event.shiftKey) {
-    event.preventDefault(); // Prevent new line
-    document.getElementById("messageForm").submit(); // Submit form
-  }
-}
 
+
+let selectedFiles = []; 
 
 document.addEventListener("DOMContentLoaded", function () {
   const fileInput = document.getElementById("fileInput");
   const fileHolder = document.querySelector(".fileInput-holder");
-  let selectedFiles = [];
+  const messageInput = document.getElementById("messageInput");
+  const messageForm = document.getElementById("messageForm");
+
+  // Attach event listener for Enter key
+  messageInput.addEventListener("keydown", handleEnter);
+
+  function handleEnter(event) {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      sendMessage(); 
+    }
+  }
+
+  function sendMessage() {
+    let formData = new FormData(messageForm);
+    formData.append("body", messageInput.value);
+
+    // Append selected files
+    selectedFiles.forEach(file => {
+      formData.append("file", file);
+    });
+
+    // Disable input while sending
+    messageInput.disabled = true;
+
+    fetch(messageForm.action, {
+      method: "POST",
+      body: formData,
+    })
+      .then(response => {
+        if (response.ok) {
+          window.location.reload(); // Refresh page on success
+        } else {
+          console.log("Error in sending message");
+          messageInput.disabled = false; // Re-enable input on error
+        }
+      })
+      .catch(error => {
+        console.error("Fetch error:", error);
+        messageInput.disabled = false;
+      });
+  }
 
   fileInput.addEventListener("change", function (event) {
     handleFileSelect(event.target.files);
@@ -145,14 +185,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function handleFileSelect(files) {
     if (files.length === 0) return;
-    fileHolder.style.display = "flex"; // Show file holder
+    fileHolder.style.display = "flex";
 
     for (let i = 0; i < files.length; i++) {
       let file = files[i];
 
-      // Prevent duplicate file selection
       if (selectedFiles.some(f => f.name === file.name)) continue;
-
       selectedFiles.push(file);
 
       let fileContainer = document.createElement("div");
@@ -160,7 +198,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       let removeButton = document.createElement("div");
       removeButton.classList.add("fileUpload-remove");
-      removeButton.innerHTML = `<svg class="actionBarIcon" width="24" height="24" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M14.25 1c.41 0 .75.34.75.75V3h5.25c.41 0 .75.34.75.75v.5c0 .41-.34.75-.75.75H3.75A.75.75 0 0 1 3 4.25v-.5c0-.41.34-.75.75-.75H9V1.75c0-.41.34-.75.75-.75h4.5Z"></path><path fill="currentColor" fill-rule="evenodd" d="M5.06 7a1 1 0 0 0-1 1.06l.76 12.13a3 3 0 0 0 3 2.81h8.36a3 3 0 0 0 3-2.81l.75-12.13a1 1 0 0 0-1-1.06H5.07ZM11 12a1 1 0 1 0-2 0v6a1 1 0 1 0 2 0v-6Zm3-1a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1Z" clip-rule="evenodd" class=""></path></svg>`;
+      removeButton.innerHTML = `<svg class="actionBarIcon" width="24" height="24" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M14.25 1c.41 0 .75.34.75.75V3h5.25c.41 0 .75.34.75.75v.5c0 .41-.34.75-.75.75H3.75A.75.75 0 0 1 3 4.25v-.5c0-.41.34-.75.75-.75H9V1.75c0-.41.34-.75.75-.75h4.5Z"></path><path fill="currentColor" fill-rule="evenodd" d="M5.06 7a1 1 0 0 0-1 1.06l.76 12.13a3 3 0 0 0 3 2.81h8.36a3 3 0 0 0 3-2.81l.75-12.13a1 1 0 0 0-1-1.06H5.07ZM11 12a1 1 0 1 0-2 0v6a1 1 0 1 0 2 0v-6Zm3-1a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1Z" clip-rule="evenodd"></path></svg>`;
 
       let editButton = document.createElement("div");
       editButton.classList.add("fileUpload-edit");
@@ -225,65 +263,60 @@ document.addEventListener("DOMContentLoaded", function () {
       fileHolder.appendChild(fileContainer);
     }
   }
-
- // Open Edit Modal
-function openEditModal(fileNameElement, fileObj) {
-  const modal = document.getElementById("editFileModal");
-  const input = document.getElementById("editFileNameInput");
-  const saveButton = document.getElementById("saveFileName");
-  const cancelButton = document.getElementById("cancelEditButton");
-
-  // Remove the file extension before displaying the name
-  const baseFileName = fileNameElement.textContent.split(".").slice(0, -1).join("."); // Remove extension
-  input.value = baseFileName; // Pre-fill with the current base file name (without extension)
-  modal.style.display = "flex";
-
-  // **Ensure previous event listeners are removed before adding a new one**
-  saveButton.replaceWith(saveButton.cloneNode(true));
-  cancelButton.replaceWith(cancelButton.cloneNode(true));
-
-  // Get the new cloned buttons
-  const newSaveButton = document.getElementById("saveFileName");
-  const newCancelButton = document.getElementById("cancelEditButton");
-
-  // Save button should rename the file and close the modal
-  newSaveButton.addEventListener("click", function (event) {
-      event.preventDefault(); // Prevent unintended behavior
-      saveFileName(fileNameElement, input.value, fileObj);
-  });
-
-  // Cancel button should ONLY close the modal and prevent any unintended behavior
-  newCancelButton.addEventListener("click", function (event) {
-      event.preventDefault();  // Prevent form submission
-      event.stopPropagation(); // Stop bubbling up any event
-      console.log("Cancel button clicked");
-      closeEditModal(); // Just close modal, do NOT save anything
-  });
-}
-
-// Close Edit Modal
-window.closeEditModal = function () {
-  document.getElementById("editFileModal").style.display = "none";
-}
-
-// Save File Name
-function saveFileName(fileNameElement, newName, fileObj) {
-  if (newName.trim() !== "") {
-      let fileExtension = fileObj.name.split('.').pop(); // Extract original extension
-      let renamedFile = new File([fileObj], newName + "." + fileExtension, { type: fileObj.type });
-
-      // Update the file input with the new file
-      let dataTransfer = new DataTransfer();
-      dataTransfer.items.add(renamedFile);
-      document.getElementById("fileInput").files = dataTransfer.files;
-
-      // Update the displayed filename
-      fileNameElement.textContent = newName + "." + fileExtension;
-  }
-  closeEditModal(); // Close the modal after saving
-}
-
 });
+
+  function openEditModal(fileNameElement, fileObj) {
+    const modal = document.getElementById("editFileModal");
+    const input = document.getElementById("editFileNameInput");
+    const saveButton = document.getElementById("saveFileName");
+    const cancelButton = document.getElementById("cancelEditButton");
+
+    input.value = fileNameElement.textContent.split(".").slice(0, -1).join(".");
+    modal.style.display = "flex";
+
+    saveButton.replaceWith(saveButton.cloneNode(true));
+    cancelButton.replaceWith(cancelButton.cloneNode(true));
+
+    const newSaveButton = document.getElementById("saveFileName");
+    const newCancelButton = document.getElementById("cancelEditButton");
+
+    newSaveButton.addEventListener("click", function (event) {
+      event.preventDefault();
+      saveFileName(fileNameElement, input.value, fileObj);
+    });
+
+    newCancelButton.addEventListener("click", function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      closeEditModal();
+    });
+  }
+
+  window.closeEditModal = function () {
+    document.getElementById("editFileModal").style.display = "none";
+  };
+
+  function saveFileName(fileNameElement, newName, fileObj) {
+    if (newName.trim() !== "") {
+        let fileExtension = fileObj.name.split(".").pop();
+        let renamedFile = new File([fileObj], newName + "." + fileExtension, { type: fileObj.type });
+
+        let index = selectedFiles.findIndex(f => f.name === fileObj.name);
+        if (index !== -1) {
+            selectedFiles[index] = renamedFile;
+        }
+
+        let dataTransfer = new DataTransfer();
+        selectedFiles.forEach(file => dataTransfer.items.add(file));
+        document.getElementById("fileInput").files = dataTransfer.files;
+
+        fileNameElement.textContent = newName + "." + fileExtension;
+    }
+    closeEditModal();
+}
+
+
+
 
 
 

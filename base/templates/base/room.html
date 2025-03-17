@@ -126,54 +126,56 @@
                         {% endif %}
                       {% endif %}
                     {% endwith %}
-                    <!-- Display Uploaded Files (Properly Styled) -->
-                    {% if message.file %}
-                      <div class="message__file">
-                        {% with message.file.url|lower as file_url %}
-                          {% if file_url|slice:'-4:' == ".png" or file_url|slice:'-4:' == ".jpg" or file_url|slice:'-5:' == ".jpeg" or file_url|slice:'-4:' == ".gif" or file_url|slice:'-4:' == ".svg" %}
-                            <img src="{{ message.file.url }}"
-                                 alt="Uploaded Image"
-                                 class="uploaded-image">
-                          {% else %}
-                            {% with file_url|slice:'-3:' as ext %}
-                              {% with file_url|slice:'-4:' as ext4 %}
-                                {% with file_url|slice:'-5:' as ext5 %}
-                                  {% if ext == "pdf" %}
-                                    <img src="{% static 'Images/icons/pdf_icon.png' %}" class="file-icon">
-                                  {% elif ext == "txt" %}
-                                    <img src="{% static 'Images/icons/txt_icon.png' %}" class="file-icon">
-                                  {% elif ext4 == "docx" %}
-                                    <img src="{% static 'Images/icons/docx_icon.png' %}" class="file-icon">
-                                  {% elif ext4 == "xlsx" %}
-                                    <img src="{% static 'Images/icons/xlsx_icon.png' %}" class="file-icon">
-                                  {% elif ext == "py" %}
-                                    <img src="{% static 'Images/icons/py_icon.png' %}" class="file-icon">
-                                  {% elif ext == "c" %}
-                                    <img src="{% static 'Images/icons/c_icon.png' %}" class="file-icon">
-                                  {% elif ext4 == "cpp" %}
-                                    <img src="{% static 'Images/icons/cpp_icon.png' %}" class="file-icon">
-                                  {% elif ext4 == "html" %}
-                                    <img src="{% static 'Images/icons/html_icon.png' %}" class="file-icon">
-                                  {% elif ext4 == "css" %}
-                                    <img src="{% static 'Images/icons/css_icon.png' %}" class="file-icon">
-                                  {% elif ext4 == "zip" %}
-                                    <img src="{% static 'Images/icons/zip_icon.png' %}" class="file-icon">
-                                  {% elif ext4 == "mp3" %}
-                                    <img src="{% static 'Images/icons/mp3_icon.png' %}" class="file-icon">
-                                  {% elif ext4 == "mp4" %}
-                                    <img src="{% static 'Images/icons/mp4_icon.png' %}" class="file-icon">
-                                  {% else %}
-                                    <img src="{% static 'Images/icons/default_file_icon.png' %}"
-                                         class="file-icon">
-                                  {% endif %}
+                    <!-- Display Multiple Uploaded Files -->
+                    {% if message.files.all %}
+                      <div class="message__files">
+                        {% for file in message.files.all %}
+                          <div class="message__file">
+                            {% with file.file.url|lower as file_url %}
+                              {% if file_url|slice:'-4:' == ".png" or file_url|slice:'-4:' == ".jpg" or file_url|slice:'-5:' == ".jpeg" or file_url|slice:'-4:' == ".gif" or file_url|slice:'-4:' == ".svg" %}
+                                <img src="{{ file.file.url }}" alt="Uploaded Image" class="uploaded-image">
+                              {% else %}
+                                {% with file_url|slice:'-3:' as ext %}
+                                  {% with file_url|slice:'-4:' as ext4 %}
+                                    {% with file_url|slice:'-5:' as ext5 %}
+                                      {% if ext == "pdf" %}
+                                        <img src="{% static 'Images/icons/pdf_icon.png' %}" class="file-icon">
+                                      {% elif ext == "txt" %}
+                                        <img src="{% static 'Images/icons/txt_icon.png' %}" class="file-icon">
+                                      {% elif ext4 == "docx" %}
+                                        <img src="{% static 'Images/icons/docx_icon.png' %}" class="file-icon">
+                                      {% elif ext4 == "xlsx" %}
+                                        <img src="{% static 'Images/icons/xlsx_icon.png' %}" class="file-icon">
+                                      {% elif ext == "py" %}
+                                        <img src="{% static 'Images/icons/py_icon.png' %}" class="file-icon">
+                                      {% elif ext == "c" %}
+                                        <img src="{% static 'Images/icons/c_icon.png' %}" class="file-icon">
+                                      {% elif ext4 == "cpp" %}
+                                        <img src="{% static 'Images/icons/cpp_icon.png' %}" class="file-icon">
+                                      {% elif ext4 == "html" %}
+                                        <img src="{% static 'Images/icons/html_icon.png' %}" class="file-icon">
+                                      {% elif ext4 == "css" %}
+                                        <img src="{% static 'Images/icons/css_icon.png' %}" class="file-icon">
+                                      {% elif ext4 == "zip" %}
+                                        <img src="{% static 'Images/icons/zip_icon.png' %}" class="file-icon">
+                                      {% elif ext4 == "mp3" %}
+                                        <img src="{% static 'Images/icons/mp3_icon.png' %}" class="file-icon">
+                                      {% elif ext4 == "mp4" %}
+                                        <img src="{% static 'Images/icons/mp4_icon.png' %}" class="file-icon">
+                                      {% else %}
+                                        <img src="{% static 'Images/icons/default_file_icon.png' %}"
+                                             class="file-icon">
+                                      {% endif %}
+                                    {% endwith %}
+                                  {% endwith %}
                                 {% endwith %}
-                              {% endwith %}
+                                <p class="file-link">
+                                  <a href="{{ file.file.url }}" download>{{ file.file.name|cut:"messages/" }}</a>
+                                </p>
+                              {% endif %}
                             {% endwith %}
-                            <p class="file-link">
-                              <a href="{{ message.file.url }}" download>{{ message.file.name|cut:"messages/" }}</a>
-                            </p>
-                          {% endif %}
-                        {% endwith %}
+                          </div>
+                        {% endfor %}
                       </div>
                     {% endif %}
                   </div>
@@ -182,37 +184,45 @@
             </div>
             <div class="room__message">
               {% if request.user.is_authenticated %}
-                <form id="messageForm"
-                      action=""
-                      method="POST"
-                      enctype="multipart/form-data">
-                  {% csrf_token %}
-                  <input type="text"
-                         name="body"
-                         id="messageInput"
-                         placeholder="Write your message here..."
-                         onkeydown="handleEnter(event)">
-                  <input type="file" name="file" id="fileInput" style="display: none;" multiple>
-                  <div class="fileInput-holder"></div>
-                  <div class="file-upload"
-                       onclick="document.getElementById('fileInput').click()">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
-                      <path d="M 25 2 C 12.309295 2 2 12.309295 2 25 C 2 37.690705 12.309295 48 25 48 C 37.690705 48 48 37.690705 48 25 C 48 12.309295 37.690705 2 25 2 z M 25 4 C 36.609824 4 46 13.390176 46 25 C 46 36.609824 36.609824 46 25 46 C 13.390176 46 4 36.609824 4 25 C 4 13.390176 13.390176 4 25 4 z M 24 13 L 24 24 L 13 24 L 13 26 L 24 26 L 24 37 L 26 37 L 26 26 L 37 26 L 37 24 L 26 24 L 26 13 L 24 13 z" />
-                    </svg>
-                  </div>
-                  <div id="editFileModal" class="modal">
-                    <div class="modal-content editFileModal form__group layout__box">
-                      <h2 class="layout__boxHeader">Edit File Name</h2>
-                      <div class="layout__body">
-                        <input type="text" id="editFileNameInput">
-                        <div class="form__action">
-                          <button id="cancelEditButton" class="btn btn--dark">Cancel</button> 
-                          <button id="saveFileName" class="btn btn--main">Save</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </form>
+              <form id="messageForm"
+              action=""
+              method="POST"
+              enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="text"
+                 name="body"
+                 id="messageInput"  
+                 placeholder="Write your message here..."
+                 onkeydown="handleEnter(event)">
+          
+          <input type="file"
+                 name="file"
+                 id="fileInput"
+                 style="display: none"
+                 multiple>
+          
+          <div class="fileInput-holder"></div>
+          <div class="file-upload"
+               onclick="document.getElementById('fileInput').click()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
+              <path d="M 25 2 C 12.309295 2 2 12.309295 2 25 C 2 37.690705 12.309295 48 25 48 C 37.690705 48 48 37.690705 48 25 C 48 12.309295 37.690705 2 25 2 z M 25 4 C 36.609824 4 46 13.390176 46 25 C 46 36.609824 36.609824 46 25 46 C 13.390176 46 4 36.609824 4 25 C 4 13.390176 13.390176 4 25 4 z M 24 13 L 24 24 L 13 24 L 13 26 L 24 26 L 24 37 L 26 37 L 26 26 L 37 26 L 37 24 L 26 24 L 26 13 L 24 13 z" />
+            </svg>
+          </div>
+        
+          <div id="editFileModal" class="modal">
+            <div class="modal-content editFileModal form__group layout__box">
+              <h2 class="layout__boxHeader">Edit File Name</h2>
+              <div class="layout__body">
+                <input type="text" id="editFileNameInput">
+                <div class="form__action">
+                  <button id="cancelEditButton" class="btn btn--dark">Cancel</button>
+                  <button id="saveFileName" class="btn btn--main">Save</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+        
               {% else %}
                 <div class="PLFWM">
                   <h3>
