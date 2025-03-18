@@ -53,7 +53,7 @@
       </div>
       <div class="activities__boxContent">
         <p>
-          replied to post “<a href="{% url 'room' message.room.id %}">{{ message.room }}</a>”
+          commented on room “<a href="{% url 'room' message.room.id %}">{{ message.room }}</a>”
         </p>
         <div class="activities__boxRoomContent">
           {{ message.body| truncatewords:20 }}
@@ -99,9 +99,9 @@
                           {% endwith %}
                         {% endwith %}
                       {% endwith %}
-                      <p class="file-link">
+                      <span class="file-link">
                         <a href="{{ file.file.url }}" download>{{ file.file.name|cut:"messages/" }}</a>
-                      </p>
+                      </span>
                     {% endif %}
                   {% endwith %}
                 </div>
