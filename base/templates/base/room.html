@@ -170,7 +170,7 @@
                                   {% endwith %}
                                 {% endwith %}
                                 <p class="file-link">
-                                  <a href="{{ file.file.url }}" download>{{ file.file.name|cut:"messages/" }}</a>
+                                  <a href="{{ file.file.url }}" download>{{ file.original_name|cut:"messages/" }}</a>
                                 </p>
                               {% endif %}
                             {% endwith %}

@@ -44,19 +44,17 @@ class Message(models.Model):
 
     class Meta:
         ordering = ['-updated', '-created']
-
     def __str__(self):
         return self.body[:50] if self.body else "File Upload"
     def delete(self, *args, **kwargs):
-        """Delete all associated files when a message is deleted"""
         for file in self.files.all():
-            file.delete()  # This calls the delete method in MessageFile
+            file.delete()  
         super().delete(*args, **kwargs)
 
 class MessageFile(models.Model):
     message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name='files')
     file = models.FileField(upload_to='messages/')
-
+    original_name = models.CharField(max_length=255, default="unknown")
     def delete(self, *args, **kwargs):
         if self.file:
             if os.path.isfile(self.file.path):

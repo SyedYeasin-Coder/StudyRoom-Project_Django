@@ -117,7 +117,7 @@ def room(request, pk):
 
             for file in files:
                 if file.name not in uploaded_files:
-                    MessageFile.objects.create(message=message, file=file)
+                    MessageFile.objects.create(message=message, file=file, original_name=file.name)
                     uploaded_files.add(file.name)
 
             room.participants.add(request.user)
@@ -125,10 +125,6 @@ def room(request, pk):
         return redirect('room', pk=room.id)
 
     return render(request, 'base/room.html', {"room": room, "messages": messages, 'participants': participants})
-
-
-
-
 
 @login_required(login_url='login')
 def createRoom(request):
