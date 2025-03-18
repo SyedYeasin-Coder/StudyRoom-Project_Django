@@ -823,7 +823,7 @@ a {
   color: var(--color-main);
 }
 
-.topics__list li a span {
+.topic-count {
   padding         : 0.5rem 1rem;
   background-color: var(--color-dark);
   border-radius   : 3px;
@@ -831,6 +831,10 @@ a {
   font-weight     : 700;
   letter-spacing  : 1px;
   max-height: 3rem;
+}
+
+.Browse{
+  background-color: var(--color-dark-medium);
 }
 
 .topics-page a:hover {
@@ -842,6 +846,13 @@ a {
   padding-bottom : 1rem;
   text-decoration: none;
   border-bottom  : 1px solid var(--color-dark-medium);
+}
+
+.topics-page .topics__list li:last-child a {
+  margin         : 2rem 0;
+  padding-bottom : 1rem;
+  text-decoration: none;
+  border-bottom  : none;
 }
 
 .topics-page .header__search {
