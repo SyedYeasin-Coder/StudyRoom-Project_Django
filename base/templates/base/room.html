@@ -65,9 +65,15 @@
             <div class="room__hosted">
               <p>Hosted By</p>
               <a href="{% url 'user-profile' room.host.id %}" class="room__author">
-                <div class="avatar avatar--small">
-                  <img src="{{ room.host.avatar.url }}" />
-                </div>
+                {% if request.user != room.host %}
+                  <div class="avatar avatar--medium inactive">
+                    <img src="{{ room.host.avatar.url }}" />
+                  </div>
+                {% else %}
+                  <div class="avatar avatar--medium active">
+                    <img src="{{ room.host.avatar.url }}" />
+                  </div>
+                {% endif %}
                 <span>{{ room.host.name }}</span>
               </a>
             </div>
@@ -91,9 +97,15 @@
                     <div class="thread__author">
                       <a href="{% url 'user-profile' message.user.id %}"
                          class="thread__authorInfo">
-                        <div class="avatar avatar--small">
-                          <img src="{{ message.user.avatar.url }}" />
-                        </div>
+                         {% if request.user != message.user %}         
+                         <div class="avatar avatar--small inactive">
+                           <img src="{{ message.user.avatar.url }}" />
+                         </div>
+                         {% else %}
+                         <div class="avatar avatar--small active">
+                           <img src="{{ message.user.avatar.url }}" />
+                         </div>
+                         {% endif %}
                         <span>{{ message.user.username }}</span>
                       </a>
                       <span class="thread__date">{{ message.created | timesince }} ago</span>
@@ -155,7 +167,7 @@
                           <div class="message__file">
                             {% with file.file.url|lower as file_url %}
                               {% if file_url|slice:'-4:' == ".png" or file_url|slice:'-4:' == ".jpg" or file_url|slice:'-5:' == ".jpeg" or file_url|slice:'-4:' == ".gif" or file_url|slice:'-4:' == ".svg" %}
-                              <img src="{{ file.file.url }}" alt="Uploaded Image" class="uploaded-image">
+                                <img src="{{ file.file.url }}" alt="Uploaded Image" class="uploaded-image">
                               {% else %}
                                 {% with file_url|slice:'-1:' as ext %}
                                   {% with file_url|slice:'-2:' as ext2 %}
@@ -188,14 +200,14 @@
                                             </audio>
                                           {% elif ext3 == "wav" %}
                                             <audio controls class="audioPlayer">
-                                              <source src="{{file.file.url}}" type="audio/wav">
+                                              <source src="{{ file.file.url }}" type="audio/wav">
                                             </audio>
                                           {% elif ext3 == "mkv" %}
-                                          <img src="{% static 'Images/icons/mkv_icon.png' %}" class="file-icon">
+                                            <img src="{% static 'Images/icons/mkv_icon.png' %}" class="file-icon">
                                           {% elif ext3 == "mp4" %}
-                                          <video class="videoPlayer" controls>
-                                            <source src="{{ file.file.url }}" type="video/mp4">
-                                        </video>
+                                            <video class="videoPlayer" controls>
+                                              <source src="{{ file.file.url }}" type="video/mp4">
+                                            </video>
                                           {% else %}
                                             <img src="{% static 'Images/icons/default_file_icon.png' %}"
                                                  class="file-icon">
@@ -261,9 +273,15 @@
         <div class="participants__list scroll">
           {% for participant in participants %}
             <a href="{% url 'user-profile' participant.id %}" class="participant">
-              <div class="avatar avatar--medium">
-                <img src="{{ participant.avatar.url }}" />
-              </div>
+              {% if request.user != participant %}         
+          <div class="avatar avatar--medium inactive">
+            <img src="{{ participant.avatar.url }}" />
+          </div>
+          {% else %}
+          <div class="avatar avatar--medium active">
+            <img src="{{ participant.avatar.url }}" />
+          </div>
+          {% endif %}
               <p>
                 {{ participant.name }}
                 <span>{{ participant.username }}</span>

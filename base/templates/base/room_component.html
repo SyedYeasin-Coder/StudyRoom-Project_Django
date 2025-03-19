@@ -2,9 +2,15 @@
 <div class="roomListRoom">
     <div class="roomListRoom__header">
       <a href="{% url 'user-profile' room.host.id %}" class="roomListRoom__author">
-        <div class="avatar avatar--small">
+        {% if request.user != room.host %}
+        <div class="avatar avatar--small inactive">
           <img src="{{room.host.avatar.url}}" />
         </div>
+        {% else %}
+        <div class="avatar avatar--small active">
+          <img src="{{room.host.avatar.url}}" />
+        </div>
+        {% endif %}
         <span>{{room.host.username}}</span>
       </a>
       <div class="roomListRoom__actions">

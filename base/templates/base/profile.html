@@ -1,8 +1,6 @@
 {% extends 'base/main.html' %}
-
-
 {% block text %}
-<script>
+  <script>
   // Save the avatar and handle form submission
   function saveAvatar() {
     const avatarInput = document.getElementById('avatarInput').files[0];
@@ -29,79 +27,85 @@
       })
       .catch(error => console.error("Error:", error));
   }
-</script>
-<main class="profile-page layout layout--3">
-  <div class="container">
-    <!-- Activities Start -->
-    {% include 'base/activity_component.html' %}
-    <!-- Activities End -->
-
-
-    <!-- Room List Start -->
-    <div class="roomList">
-      <div class="profile">
-        <!-- Avatar Edit Button -->
-        <div class="profile__avatar">
-          <div class="avatar avatar--large active">
-            <img src="{{ user.avatar.url|default:'/static/Images/avatar.svg' }}" />
-
-            <div class="avatar__overlay" {% if "request.user==user" %} onclick="openAvatarModal()" {% endif %}>
-              {% if request.user == user %}
-              <span>Edit</span>
-              {% endif %}
-            </div>
+  </script>
+  <main class="profile-page layout layout--3">
+    <div class="container">
+      <!-- Activities Start -->
+      {% include 'base/activity_component.html' %}
+      <!-- Activities End -->
+      <!-- Room List Start -->
+      <div class="roomList">
+        <div class="profile">
+          <!-- Avatar Edit Button -->
+          <div class="profile__avatar">
+            {% if request.user != user %}
+              <div class="avatar avatar--large inactive">
+                <img src="{{ user.avatar.url|default:'/static/Images/avatar.svg' }}" />
+                <div class="avatar__overlay"
+                     {% if "request.user==user" %}onclick="openAvatarModal()"{% endif %}>
+                  {% if request.user == user %}<span>Edit</span>{% endif %}
+                </div>
+              </div>
+            {% else %}
+              <div class="avatar avatar--large active">
+                <img src="{{ user.avatar.url|default:'/static/Images/avatar.svg' }}" />
+                <div class="avatar__overlay"
+                     {% if "request.user==user" %}onclick="openAvatarModal()"{% endif %}>
+                  {% if request.user == user %}<span>Edit</span>{% endif %}
+                </div>
+              </div>
+            {% endif %}
           </div>
-        </div>
-
-        <!-- Modal for Avatar Preview and Upload -->
-        {% if request.user == user %}
-        <div id="avatarModal" class="modal">
-          <div class="modal-content">
-            <h3 class="layout__boxHeader">Choose Profile Picture</h3>
-            <div class="avatar-preview">
-              <img id="avatarImage" src="{{ user.avatar.url|default:'/static/Images/avatar.svg' }}" />
-            </div>
-            <button class="btn btn--main" onclick="document.getElementById('avatarInput').click()">Upload New
-              Photo</button>
-            <input type="file" id="avatarInput" name="avatar" accept="image/*" style="display: none;"
-              onchange="previewAvatar(event)">
-            <div class="modal-actions">
-              <button class="btn btn--dark" onclick="closeAvatarModal()">Cancel</button>
-              <button class="btn btn--main" onclick="saveAvatar()">Save</button>
-            </div>
-          </div>
-        </div>
-        {% endif %}
-        <div class="profile__info">
-          <h3>{{user.name}}</h3>
-          <p>{{user.username}}</p>
-
+          <!-- Modal for Avatar Preview and Upload -->
           {% if request.user == user %}
-          <a href="{% url 'update-user' %}" class="btn btn--main btn--pill">Edit Profile</a>
+            <div id="avatarModal" class="modal">
+              <div class="modal-content">
+                <h3 class="layout__boxHeader">Choose Profile Picture</h3>
+                <div class="avatar-preview">
+                  <img id="avatarImage"
+                       src="{{ user.avatar.url|default:'/static/Images/avatar.svg' }}" />
+                </div>
+                <button class="btn btn--main"
+                        onclick="document.getElementById('avatarInput').click()">
+                  Upload New
+                  Photo
+                </button>
+                <input type="file"
+                       id="avatarInput"
+                       name="avatar"
+                       accept="image/*"
+                       style="display: none"
+                       onchange="previewAvatar(event)">
+                <div class="modal-actions">
+                  <button class="btn btn--dark" onclick="closeAvatarModal()">Cancel</button>
+                  <button class="btn btn--main" onclick="saveAvatar()">Save</button>
+                </div>
+              </div>
+            </div>
           {% endif %}
-
+          <div class="profile__info">
+            <h3>{{ user.name }}</h3>
+            <p>{{ user.username }}</p>
+            {% if request.user == user %}
+              <a href="{% url 'update-user' %}" class="btn btn--main btn--pill">Edit Profile</a>
+            {% endif %}
+          </div>
+          <div class="profile__about">
+            <h3>About</h3>
+            <p>{{ user.bio }}</p>
+          </div>
         </div>
-        <div class="profile__about">
-          <h3>About</h3>
-          <p>
-            {{user.bio}}
-          </p>
+        <div class="roomList__header">
+          <div>
+            <h2>Study Rooms Hosted by {{ user.username }}</h2>
+          </div>
         </div>
+        {% include 'base/room_component.html' %}
       </div>
-
-      <div class="roomList__header">
-        <div>
-          <h2>Study Rooms Hosted by {{user.username}}
-          </h2>
-        </div>
-      </div>
-      {% include 'base/room_component.html' %}
+      <!-- Room List End -->
+      <!-- Topics Start -->
+      {% include 'base/topic_component.html' %}
+      <!-- Topics End -->
     </div>
-    <!-- Room List End -->
-    <!-- Topics Start -->
-    {% include 'base/topic_component.html' %}
-    <!-- Topics End -->
-
-  </div>
-</main>
+  </main>
 {% endblock text %}

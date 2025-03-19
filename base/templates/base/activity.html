@@ -26,9 +26,15 @@
               <div class="activities__boxHeader roomListRoom__header">
                 <a href="{% url 'user-profile' message.user.id %}"
                    class="roomListRoom__author">
-                  <div class="avatar avatar--small">
-                    <img src="{{ message.user.avatar.url }}" />
-                  </div>
+                   {% if request.user != message.user %}         
+                   <div class="avatar avatar--small inactive">
+                     <img src="{{ message.user.avatar.url }}" />
+                   </div>
+                   {% else %}
+                   <div class="avatar avatar--small active">
+                     <img src="{{ message.user.avatar.url }}" />
+                   </div>
+                   {% endif %}
                   <p>
                     {{ message.user.username }}
                     <span>{{ message.created | timesince }} ago</span>
