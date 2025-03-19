@@ -207,7 +207,7 @@ a {
 
 /*========== components ==========*/
 .container {
-  max-width: 120rem;
+  max-width: 150rem;
   width    : 90%;
   margin   : auto;
   position : relative;
@@ -578,6 +578,7 @@ a {
   display        : flex;
   justify-content: space-between;
   align-items    : flex-start;
+  gap: 5rem;
 }
 
 .layout--3>.container>div:first-child {
@@ -590,8 +591,8 @@ a {
 }
 
 .layout--3>.container>div:last-child {
-  flex-basis   : 18%;
-  max-width    : 22.5rem;
+  flex-basis: 25%;
+  /* max-width    : 22.5rem; */
   background   : var(--color-dark-light);
   padding      : 1rem;
   border-radius: 5px;
