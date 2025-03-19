@@ -1,4 +1,5 @@
 import json
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -82,23 +83,45 @@ def update_avatar(request):
 
 def userProfile(request, pk):
     user = User.objects.get(id=pk)
-    rooms = user.room_set.all()
+    rooms = user.room_set.all().order_by('-created')
+
+    paginator = Paginator(rooms, 5)  # 5 rooms per page
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
     messages = user.message_set.all()
     topics = Topic.objects.all()[:4]
-    return render(request, 'base/profile.html', {'user' : user, 'rooms' : rooms, 'messages' : messages, 'topics' : topics})
+
+    return render(request, 'base/profile.html', {
+        'user': user,
+        'rooms': page_obj,  # Pass paginated rooms
+        'messages': messages,
+        'topics': topics
+    })
 
 def home(request):
-    q = request.GET.get('q') if request.GET.get('q') != None else ''
+    q = request.GET.get('q', '')
     rooms = Room.objects.filter(
         Q(topic__name__icontains=q) |
         Q(host__username__icontains=q) |
         Q(name__icontains=q) |
         Q(description__icontains=q) 
-        )
+    ).order_by('-created')
+
+    paginator = Paginator(rooms, 5)  # 5 rooms per page
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
     topics = Topic.objects.all()
     room_count = rooms.count()
     messages = Message.objects.filter(Q(room__topic__name__icontains=q))[:5]
-    return render(request, 'base/Home.html', {"rooms" : rooms, "topics" : topics, "room_count" : room_count, "messages": messages})
+
+    return render(request, 'base/Home.html', {
+        "rooms": page_obj,  # Pass paginated rooms
+        "topics": topics,
+        "room_count": room_count,
+        "messages": messages
+    })
 
 def room(request, pk):
     room = Room.objects.get(id=pk)
@@ -212,6 +235,15 @@ def edit_message(request, pk):
             return JsonResponse({"success": False, "error": "Invalid JSON"}, status=400)
 
     return JsonResponse({"success": False, "error": "Invalid request"}, status=405)
+
+def room_list(request):
+    rooms = Room.objects.all()  # Fetch all rooms
+    paginator = Paginator(rooms, 5)  # Show 5 rooms per page
+
+    page_number = request.GET.get("page")  # Get the page number from URL
+    page_obj = paginator.get_page(page_number)  # Get rooms for the current page
+
+    return render(request, "room_component.html", {"page_obj": page_obj})
 
 #! Mobile Menu
 def topicsPage(request):

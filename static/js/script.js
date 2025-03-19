@@ -455,3 +455,20 @@ window.onload = function () {
     }
   });
 };
+
+function changePage(pageNumber) {
+  fetch(`?page=${pageNumber}`)
+    .then((response) => response.text())
+    .then((html) => {
+      let parser = new DOMParser();
+      let doc = parser.parseFromString(html, "text/html");
+
+      // Replace room list
+      document.querySelector(".room-slider").innerHTML = doc.querySelector(".room-slider").innerHTML;
+      
+      // Replace pagination buttons
+      document.querySelector(".pagination").innerHTML = doc.querySelector(".pagination").innerHTML;
+    })
+    .catch((error) => console.error("Error fetching page:", error));
+}
+
