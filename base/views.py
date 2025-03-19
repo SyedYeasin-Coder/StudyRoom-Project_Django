@@ -180,9 +180,9 @@ def deleteMessage(request, pk):
     if request.method == "POST":
         room = message.room 
         message.delete()  
-        user_messages_in_room = Message.objects.filter(room=room, user=request.user).exists()
+        userMessages = Message.objects.filter(room=room, user=request.user).exists()
 
-        if not user_messages_in_room:
+        if not userMessages:
             room.participants.remove(request.user)
 
         next_url = request.GET.get("next") or request.META.get("HTTP_REFERER") or "home"
@@ -191,7 +191,7 @@ def deleteMessage(request, pk):
     return render(request, "base/delete.html", {"obj": message, 'page': 'delete_message'})
 
 
-@csrf_exempt  # TEMPORARILY DISABLE CSRF FOR DEBUGGING. REMOVE LATER.
+@ensure_csrf_cookie
 def edit_message(request, pk):
     message = get_object_or_404(Message, id=pk)
 
