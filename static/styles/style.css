@@ -892,6 +892,7 @@ a {
   background-color: var(--color-dark);
   border-radius   : 1rem;
   padding         : 2rem;
+  transition      : all 0.3s ease;
 }
 
 .roomListRoom__header {
@@ -1892,4 +1893,28 @@ input:-webkit-autofill {
 .thread__actions{
   display: flex;
   gap: 1.5rem;
+}
+
+.message__file--audio, .message__file--video{
+  flex-direction: column;
+}
+.message__file--audio audio{
+  width: 100%;
+  margin-top: 1rem;
+}
+.message__file--video video{
+  width: 100%;
+  margin-top: 1rem;
+  border-radius: 0.5rem;
+}
+
+audio::-webkit-media-controls-play-button,
+     audio::-webkit-media-controls-panel {
+     background-color: var(--color-main);
+     color: #000;
+     }
+
+.roomListRoom:hover{
+  transform : translateY(-5px);
+    box-shadow: 0 2px 20px 0px var(--color-main);
 }

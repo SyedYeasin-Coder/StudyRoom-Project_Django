@@ -65,42 +65,56 @@
                     {% if file_url|slice:'-4:' == ".png" or file_url|slice:'-4:' == ".jpg" or file_url|slice:'-5:' == ".jpeg" or file_url|slice:'-4:' == ".gif" or file_url|slice:'-4:' == ".svg" %}
                       <img src="{{ file.file.url }}" alt="Uploaded Image" class="uploaded-image">
                     {% else %}
-                      {% with file_url|slice:'-3:' as ext %}
-                        {% with file_url|slice:'-4:' as ext4 %}
-                          {% with file_url|slice:'-5:' as ext5 %}
-                            {% if ext == "pdf" %}
-                              <img src="{% static 'Images/icons/pdf_icon.png' %}" class="file-icon">
-                            {% elif ext == "txt" %}
-                              <img src="{% static 'Images/icons/txt_icon.png' %}" class="file-icon">
-                            {% elif ext4 == "docx" %}
-                              <img src="{% static 'Images/icons/docx_icon.png' %}" class="file-icon">
-                            {% elif ext4 == "xlsx" %}
-                              <img src="{% static 'Images/icons/xlsx_icon.png' %}" class="file-icon">
-                            {% elif ext == "py" %}
-                              <img src="{% static 'Images/icons/py_icon.png' %}" class="file-icon">
-                            {% elif ext == "c" %}
-                              <img src="{% static 'Images/icons/c_icon.png' %}" class="file-icon">
-                            {% elif ext4 == "cpp" %}
-                              <img src="{% static 'Images/icons/cpp_icon.png' %}" class="file-icon">
-                            {% elif ext4 == "html" %}
-                              <img src="{% static 'Images/icons/html_icon.png' %}" class="file-icon">
-                            {% elif ext4 == "css" %}
-                              <img src="{% static 'Images/icons/css_icon.png' %}" class="file-icon">
-                            {% elif ext4 == "zip" %}
-                              <img src="{% static 'Images/icons/zip_icon.png' %}" class="file-icon">
-                            {% elif ext4 == "mp3" %}
-                              <img src="{% static 'Images/icons/mp3_icon.png' %}" class="file-icon">
-                            {% elif ext4 == "mp4" %}
-                              <img src="{% static 'Images/icons/mp4_icon.png' %}" class="file-icon">
-                            {% else %}
-                              <img src="{% static 'Images/icons/default_file_icon.png' %}"
-                                   class="file-icon">
-                            {% endif %}
+                      {% with file_url|slice:'-1:' as ext %}
+                        {% with file_url|slice:'-2:' as ext2 %}
+                          {% with file_url|slice:'-3:' as ext3 %}
+                            {% with file_url|slice:'-4:' as ext4 %}
+                              {% with file_url|slice:'-5:' as ext5 %}
+                                {% if ext3 == "pdf" %}
+                                  <img src="{% static 'Images/icons/pdf_icon.png' %}" class="file-icon">
+                                {% elif ext3 == "txt" %}
+                                  <img src="{% static 'Images/icons/txt_icon.png' %}" class="file-icon">
+                                {% elif ext4 == "docx" %}
+                                  <img src="{% static 'Images/icons/docx_icon.png' %}" class="file-icon">
+                                {% elif ext4 == "xlsx" %}
+                                  <img src="{% static 'Images/icons/xlsx_icon.png' %}" class="file-icon">
+                                {% elif ext2 == "py" %}
+                                  <img src="{% static 'Images/icons/py_icon.png' %}" class="file-icon">
+                                {% elif ext == "c" %}
+                                  <img src="{% static 'Images/icons/c_icon.png' %}" class="file-icon">
+                                {% elif ext3 == "cpp" or ext3 == "c++" %}
+                                  <img src="{% static 'Images/icons/cpp_icon.png' %}" class="file-icon">
+                                {% elif ext4 == "html" %}
+                                  <img src="{% static 'Images/icons/html_icon.png' %}" class="file-icon">
+                                {% elif ext3 == "css" %}
+                                  <img src="{% static 'Images/icons/css_icon.png' %}" class="file-icon">
+                                {% elif ext3 == "zip" %}
+                                  <img src="{% static 'Images/icons/zip_icon.png' %}" class="file-icon">
+                                {% elif ext3 == "mp3" %}
+                                  <audio controls class="audioPlayer">
+                                    <source src="{{ file.file.url }}" type="audio/mp3">
+                                  </audio>
+                                {% elif ext3 == "wav" %}
+                                  <audio controls class="audioPlayer">
+                                    <source src="{{file.file.url}}" type="audio/wav">
+                                  </audio>
+                                {% elif ext3 == "mkv" %}
+                                <img src="{% static 'Images/icons/mkv_icon.png' %}" class="file-icon">
+                                {% elif ext3 == "mp4" %}
+                                <video class="videoPlayer" controls>
+                                  <source src="{{ file.file.url }}" type="video/mp4">
+                              </video>
+                                {% else %}
+                                  <img src="{% static 'Images/icons/default_file_icon.png' %}"
+                                       class="file-icon">
+                                {% endif %}
+                              {% endwith %}
+                            {% endwith %}
                           {% endwith %}
                         {% endwith %}
                       {% endwith %}
                       <span class="file-link">
-                        <a href="{{ file.file.url }}" download>{{ file.file.name|cut:"messages/" }}</a>
+                        <a href="{{ file.file.url }}" target="_blank">{{ file.file.name|cut:"messages/" }}</a>
                       </span>
                     {% endif %}
                   {% endwith %}

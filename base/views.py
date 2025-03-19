@@ -9,6 +9,7 @@ from .form import RoomForm, UserForm, MyUserCreationForm
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.core.files.storage import default_storage
+
 # Create your views here.
 
 def loginView(request):
@@ -212,9 +213,7 @@ def edit_message(request, pk):
 
     return JsonResponse({"success": False, "error": "Invalid request"}, status=405)
 
-
 #! Mobile Menu
-
 def topicsPage(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
     topics = Topic.objects.filter(name__icontains=q)

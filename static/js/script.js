@@ -274,18 +274,18 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   document.querySelectorAll(".thread__edit").forEach(edit => {
     edit.addEventListener("click", function () {
-        const messageId = edit.getAttribute("data-message-id");
-        const messageElement = document.getElementById(messageId); // Get the actual message element
+      const messageId = edit.getAttribute("data-message-id");
+      const messageElement = document.getElementById(messageId); // Get the actual message element
 
-        if (!messageElement) {
-            console.error("Message element not found!");
-            return;
-        }
+      if (!messageElement) {
+        console.error("Message element not found!");
+        return;
+      }
 
-        const messageText = messageElement.textContent.trim();
-        openEditModal(null, null, messageId, messageText); // Pass only message-related params
+      const messageText = messageElement.textContent.trim();
+      openEditModal(null, null, messageId, messageText); // Pass only message-related params
     });
-});
+  });
 });
 
 function openEditModal(fileNameElement, fileObj = null, messageId = null, messageText = null) {
@@ -313,7 +313,7 @@ function openEditModal(fileNameElement, fileObj = null, messageId = null, messag
 
   // ✅ Remove old event listeners safely and add new one
   saveButton.replaceWith(saveButton.cloneNode(true)); // Ensure fresh button
-  const newSaveButton = document.getElementById("saveFileName"); 
+  const newSaveButton = document.getElementById("saveFileName");
 
   newSaveButton.addEventListener("click", function (event) {
     event.preventDefault();
@@ -438,4 +438,20 @@ function getCSRFToken() {
   return csrfTokenInput ? csrfTokenInput.value : "";
 }
 
+window.onload = function () {
+  var audioElements = document.getElementsByClassName('audioPlayer');
+  var videoElements = document.getElementsByClassName('videoPlayer');
 
+  Array.from(audioElements).forEach(function(audioElement) {
+    var parentContainer = audioElement.closest('.message__file');
+    if (parentContainer) {
+      parentContainer.classList.add('message__file--audio');
+    }
+  });
+  Array.from(videoElements).forEach(function(videoElement) {
+    var parentContainer = videoElement.closest('.message__file');
+    if (parentContainer) {
+      parentContainer.classList.add('message__file--video');
+    }
+  });
+};
