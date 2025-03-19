@@ -1656,8 +1656,6 @@ li {
   width           : 30px;
   height          : 30px;
   display         : inline-flex;
-  align-items     : center;
-  justify-content : center;
   cursor          : pointer;
   background-color: var(--color-light);
   border-radius   : 50%;
@@ -1888,4 +1886,9 @@ input:-webkit-autofill {
   display    : flex;
   align-items: center;
   gap        : 1rem;
+}
+
+.thread__actions{
+  display: flex;
+  gap: 1.5rem;
 }

@@ -28,14 +28,14 @@ function openAvatarModal() {
 }
 
 function closeAvatarModal() {
-  const modal = document.getElementById('avatarModal'); 
+  const modal = document.getElementById('avatarModal');
   if (modal) {
     modal.style.display = 'none';
   }
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  closeAvatarModal(); 
+  closeAvatarModal();
 });
 
 function previewAvatar(event) {
@@ -131,7 +131,7 @@ function previewFile(event) {
 }
 
 
-let selectedFiles = []; 
+let selectedFiles = [];
 
 document.addEventListener("DOMContentLoaded", function () {
   const fileInput = document.getElementById("fileInput");
@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function handleEnter(event) {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
-      sendMessage(); 
+      sendMessage();
     }
   }
 
@@ -245,7 +245,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
       removeButton.addEventListener("click", function () {
         fileContainer.remove();
+        // Remove file from selectedFiles using name matching
         selectedFiles = selectedFiles.filter(f => f.name !== file.name);
+
+        // **Ensure file input updates properly**
+        let dataTransfer = new DataTransfer();
+        selectedFiles.forEach(f => dataTransfer.items.add(f));
+        fileInput.files = dataTransfer.files;  // Reassign updated list
+
+        // Hide file holder if no files remain
         if (selectedFiles.length === 0) {
           fileInput.value = "";
           fileHolder.style.display = "none";
@@ -256,6 +264,7 @@ document.addEventListener("DOMContentLoaded", function () {
         openEditModal(fileName, file);
       });
 
+
       fileContainer.appendChild(filePreview);
       fileContainer.appendChild(fileName);
       fileContainer.appendChild(removeButton);
@@ -263,61 +272,170 @@ document.addEventListener("DOMContentLoaded", function () {
       fileHolder.appendChild(fileContainer);
     }
   }
-});
+  document.querySelectorAll(".thread__edit").forEach(edit => {
+    edit.addEventListener("click", function () {
+        const messageId = edit.getAttribute("data-message-id");
+        const messageElement = document.getElementById(messageId); // Get the actual message element
 
-  function openEditModal(fileNameElement, fileObj) {
-    const modal = document.getElementById("editFileModal");
-    const input = document.getElementById("editFileNameInput");
-    const saveButton = document.getElementById("saveFileName");
-    const cancelButton = document.getElementById("cancelEditButton");
-
-    input.value = fileNameElement.textContent.split(".").slice(0, -1).join(".");
-    modal.style.display = "flex";
-
-    saveButton.replaceWith(saveButton.cloneNode(true));
-    cancelButton.replaceWith(cancelButton.cloneNode(true));
-
-    const newSaveButton = document.getElementById("saveFileName");
-    const newCancelButton = document.getElementById("cancelEditButton");
-
-    newSaveButton.addEventListener("click", function (event) {
-      event.preventDefault();
-      saveFileName(fileNameElement, input.value, fileObj);
-    });
-
-    newCancelButton.addEventListener("click", function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      closeEditModal();
-    });
-  }
-
-  window.closeEditModal = function () {
-    document.getElementById("editFileModal").style.display = "none";
-  };
-
-  function saveFileName(fileNameElement, newName, fileObj) {
-    if (newName.trim() !== "") {
-        let fileExtension = fileObj.name.split(".").pop();
-        let renamedFile = new File([fileObj], newName + "." + fileExtension, { type: fileObj.type });
-
-        let index = selectedFiles.findIndex(f => f.name === fileObj.name);
-        if (index !== -1) {
-            selectedFiles[index] = renamedFile;
+        if (!messageElement) {
+            console.error("Message element not found!");
+            return;
         }
 
-        let dataTransfer = new DataTransfer();
-        selectedFiles.forEach(file => dataTransfer.items.add(file));
-        document.getElementById("fileInput").files = dataTransfer.files;
+        const messageText = messageElement.textContent.trim();
+        openEditModal(null, null, messageId, messageText); // Pass only message-related params
+    });
+});
+});
 
-        fileNameElement.textContent = newName + "." + fileExtension;
+function openEditModal(fileNameElement, fileObj = null, messageId = null, messageText = null) {
+  const modal = document.getElementById("editFileModal");
+  const input = document.getElementById("editFileNameInput");
+  const saveButton = document.getElementById("saveFileName");
+  const cancelButton = document.getElementById("cancelEditButton");
+
+  // Check if editing a file or a text message
+  if (fileObj) {
+    input.value = fileNameElement.textContent.split(".").slice(0, -1).join(".");
+    modal.querySelector(".layout__boxHeader").textContent = "Edit File Name";
+    modal.setAttribute("data-message-id", "");
+  } else if (messageId && messageText) {
+    input.value = messageText.trim();
+    modal.querySelector(".layout__boxHeader").textContent = "Edit Message";
+    modal.setAttribute("data-message-id", messageId);
+  } else {
+    console.error("Invalid parameters for openEditModal");
+    return;
+  }
+
+  // Open modal
+  modal.style.display = "flex";
+
+  // ✅ Remove old event listeners safely and add new one
+  saveButton.replaceWith(saveButton.cloneNode(true)); // Ensure fresh button
+  const newSaveButton = document.getElementById("saveFileName"); 
+
+  newSaveButton.addEventListener("click", function (event) {
+    event.preventDefault();
+    const updatedText = input.value.trim();
+    const storedMessageId = modal.getAttribute("data-message-id");
+
+    if (!updatedText) {
+      alert("Message cannot be empty!");
+      return;
     }
+
+    if (fileObj) {
+      saveFileName(fileNameElement, updatedText, fileObj);
+    } else if (storedMessageId) {
+      console.log("Saving message:", storedMessageId, updatedText);
+      saveMessage(storedMessageId, updatedText);
+      console.log("Message saved!");
+    }
+  });
+
+  // ✅ Cancel button event listener (already works)
+  cancelButton.addEventListener("click", function (event) {
+    event.preventDefault();
+    event.stopPropagation();
     closeEditModal();
+  });
 }
 
 
 
 
+window.closeEditModal = function () {
+  document.getElementById("editFileModal").style.display = "none";
+};
 
+function saveFileName(fileNameElement, newName, fileObj) {
+  if (newName.trim() !== "") {
+    let fileExtension = fileObj.name.split(".").pop(); // Keep original extension
+    let renamedFile = new File([fileObj], newName + "." + fileExtension, { type: fileObj.type });
+
+    // Replace file reference in selectedFiles
+    let index = selectedFiles.findIndex(f => f.name === fileObj.name);
+    if (index !== -1) {
+      selectedFiles[index] = renamedFile;
+    }
+
+    // Fully reset fileInput.files
+    let dataTransfer = new DataTransfer();
+    selectedFiles.forEach(file => dataTransfer.items.add(file));
+    fileInput.files = dataTransfer.files; // Reassign updated file list
+
+    // Update UI
+    fileNameElement.textContent = newName + "." + fileExtension;
+
+    // **Ensure fileHolder is accessible**
+    const fileHolder = document.querySelector(".fileInput-holder");
+
+    // **Update remove button event listener**
+    let fileContainer = fileNameElement.closest(".EachInput");
+    let removeButton = fileContainer.querySelector(".fileUpload-remove");
+
+    if (removeButton) {
+      removeButton.replaceWith(removeButton.cloneNode(true)); // Remove old listener
+      let newRemoveButton = fileContainer.querySelector(".fileUpload-remove");
+
+      newRemoveButton.addEventListener("click", function () {
+        fileContainer.remove();
+
+        // Remove file from selectedFiles using updated reference
+        selectedFiles = selectedFiles.filter(f => f.name !== renamedFile.name);
+
+        // Ensure file input updates properly
+        let dataTransfer = new DataTransfer();
+        selectedFiles.forEach(f => dataTransfer.items.add(f));
+        fileInput.files = dataTransfer.files; // Reassign updated list
+
+        // **Fix: Check if fileHolder is available before accessing it**
+        if (selectedFiles.length === 0) {
+          fileInput.value = "";
+          if (fileHolder) {
+            fileHolder.style.display = "none";
+          }
+        }
+      });
+    }
+  }
+  closeEditModal();
+}
+function saveMessage(messageId, newText) {
+  fetch(`/edit-message/${messageId}/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCSRFToken()
+    },
+    body: JSON.stringify({ new_text: newText })
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data.success) {
+        const messageElement = document.getElementById(messageId);
+        if (messageElement) {
+          messageElement.textContent = newText;
+        } else {
+          console.error(`Message element with ID ${messageId} not found!`);
+        }
+        closeEditModal();
+      } else {
+        console.error("Failed to update message:", data.error);
+      }
+    })
+    .catch(error => console.error("Error:", error));
+}
+
+function getCSRFToken() {
+  const csrfTokenInput = document.querySelector('input[name="csrfmiddlewaretoken"]');
+  return csrfTokenInput ? csrfTokenInput.value : "";
+}
 
 

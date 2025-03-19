@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -6,7 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
 from .form import RoomForm, UserForm, MyUserCreationForm
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.core.files.storage import default_storage
 # Create your views here.
 
@@ -171,17 +172,46 @@ def deleteRoom(request, pk):
     return render(request, 'base/delete.html', {'obj' : room})
 @login_required(login_url='login')
 def deleteMessage(request, pk):
-    message = Message.objects.get(id=pk)
+    message = get_object_or_404(Message, id=pk) 
 
     if request.user != message.user:
         return HttpResponse("You can't delete this message!")
 
     if request.method == "POST":
-        message.delete()
-        next_url = request.GET.get("next") or request.META.get("HTTP_REFERER") or "home"
-        return redirect(next_url)  # Redirect to the stored page
+        room = message.room 
+        message.delete()  
+        user_messages_in_room = Message.objects.filter(room=room, user=request.user).exists()
 
-    return render(request, "base/delete.html", {"obj": message, 'page' : 'delete_message'})
+        if not user_messages_in_room:
+            room.participants.remove(request.user)
+
+        next_url = request.GET.get("next") or request.META.get("HTTP_REFERER") or "home"
+        return redirect(next_url)  
+
+    return render(request, "base/delete.html", {"obj": message, 'page': 'delete_message'})
+
+
+@csrf_exempt  # TEMPORARILY DISABLE CSRF FOR DEBUGGING. REMOVE LATER.
+def edit_message(request, pk):
+    message = get_object_or_404(Message, id=pk)
+
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            new_text = data.get("new_text", "").strip()
+
+            if not new_text:
+                return JsonResponse({"success": False, "error": "Message cannot be empty"}, status=400)
+
+            message.body = new_text
+            message.save()
+            return JsonResponse({"success": True, "new_text": new_text})
+
+        except json.JSONDecodeError:
+            return JsonResponse({"success": False, "error": "Invalid JSON"}, status=400)
+
+    return JsonResponse({"success": False, "error": "Invalid request"}, status=405)
+
 
 #! Mobile Menu
 

@@ -1,0 +1,17 @@
+<div id="editFileModal" class="modal">
+  <div class="modal-content editFileModal form__group layout__box">
+    <!-- CSRF Token for security -->
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+    <h2 class="layout__boxHeader">Edit</h2>
+
+    <div class="layout__body">
+      <input type="text" id="editFileNameInput">
+
+      <div class="form__action">
+        <button id="cancelEditButton" class="btn btn--dark">Cancel</button>
+        <button id="saveFileName" class="btn btn--main">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
