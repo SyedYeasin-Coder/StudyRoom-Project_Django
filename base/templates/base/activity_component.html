@@ -26,17 +26,10 @@
     <div class="activities__box">
       <div class="activities__boxHeader roomListRoom__header">
         <a href="{% url 'user-profile' message.user.id %}"
-           class="roomListRoom__author">
-          
-          {% if request.user != message.user %}         
-          <div class="avatar avatar--small inactive">
+           class="roomListRoom__author">       
+          <div class="avatar avatar--small {% if request.user != message.user %}inactive{% else %}active{% endif %}">
             <img src="{{ message.user.avatar.url }}" />
           </div>
-          {% else %}
-          <div class="avatar avatar--small active">
-            <img src="{{ message.user.avatar.url }}" />
-          </div>
-          {% endif %}
           <p>
             {{ message.user.username }}
             <span>{{ message.created | timesince }} ago</span>

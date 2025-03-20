@@ -65,15 +65,9 @@
             <div class="room__hosted">
               <p>Hosted By</p>
               <a href="{% url 'user-profile' room.host.id %}" class="room__author">
-                {% if request.user != room.host %}
-                  <div class="avatar avatar--medium inactive">
-                    <img src="{{ room.host.avatar.url }}" />
-                  </div>
-                {% else %}
-                  <div class="avatar avatar--medium active">
-                    <img src="{{ room.host.avatar.url }}" />
-                  </div>
-                {% endif %}
+                <div class="avatar avatar--medium {% if request.user != room.host %}inactive{% else %}active{% endif %}">
+                  <img src="{{ room.host.avatar.url }}" />
+                </div>
                 <span>{{ room.host.name }}</span>
               </a>
             </div>
@@ -97,15 +91,9 @@
                     <div class="thread__author">
                       <a href="{% url 'user-profile' message.user.id %}"
                          class="thread__authorInfo">
-                         {% if request.user != message.user %}         
-                         <div class="avatar avatar--small inactive">
-                           <img src="{{ message.user.avatar.url }}" />
-                         </div>
-                         {% else %}
-                         <div class="avatar avatar--small active">
-                           <img src="{{ message.user.avatar.url }}" />
-                         </div>
-                         {% endif %}
+                        <div class="avatar avatar--small {% if request.user != message.user %}inactive{% else %}active{% endif %}">
+                          <img src="{{ message.user.avatar.url }}" />
+                        </div>
                         <span>{{ message.user.username }}</span>
                       </a>
                       <span class="thread__date">{{ message.created | timesince }} ago</span>
@@ -160,6 +148,16 @@
                         {% endif %}
                       {% endif %}
                     {% endwith %}
+                    <!-- Display Audio Messages -->
+                    {% if message.audiomessage.all %}
+                    <div class="message__audio">
+                      <audio controls class="audioPlayer">
+                        <source src="{{ message.audiomessage.first.audio_file.url }}"
+                                type="audio/wav">
+                        Your browser does not support the audio element.
+                      </audio>
+                    </div>
+                  {% endif %}
                     <!-- Display Multiple Uploaded Files -->
                     {% if message.files.all %}
                       <div class="message__files">
@@ -226,6 +224,7 @@
                         {% endfor %}
                       </div>
                     {% endif %}
+                    
                   </div>
                 </div>
               {% endfor %}
@@ -242,13 +241,34 @@
                          id="messageInput"
                          placeholder="Write your message here..."
                          onkeydown="handleEnter(event)">
+                  <!-- Hidden File Input for Uploads -->
                   <input type="file" name="file" id="fileInput" style="display: none" multiple>
                   <div class="fileInput-holder"></div>
-                  <div class="file-upload"
-                       onclick="document.getElementById('fileInput').click()">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
-                      <path d="M 25 2 C 12.309295 2 2 12.309295 2 25 C 2 37.690705 12.309295 48 25 48 C 37.690705 48 48 37.690705 48 25 C 48 12.309295 37.690705 2 25 2 z M 25 4 C 36.609824 4 46 13.390176 46 25 C 46 36.609824 36.609824 46 25 46 C 13.390176 46 4 36.609824 4 25 C 4 13.390176 13.390176 4 25 4 z M 24 13 L 24 24 L 13 24 L 13 26 L 24 26 L 24 37 L 26 37 L 26 26 L 37 26 L 37 24 L 26 24 L 26 13 L 24 13 z" />
-                    </svg>
+                  <div class="audiofileInput-container" id="audiofileInput_container">
+                    <!-- Audio Input Section (Initially Hidden) -->
+                    <div id="audioContainer" style="display: none;">
+                      <canvas id="audioVisualizer"></canvas>
+                      <audio id="audioPreview" controls style="display: none;"></audio>
+                      <input type="hidden" name="audio_file" id="audioData">
+                      <button type="button" id="removeAudio">❌ Remove</button>
+                    </div>
+                    <!-- Mic Button -->
+                    <div class="micInput" id="micButton">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="m0 0h24v24h-24z" opacity="0" />
+                        <g>
+                        <path d="m12 15a4 4 0 0 0 4-4v-5a4 4 0 0 0 -8 0v5a4 4 0 0 0 4 4z" />
+                        <path d="m19 11a1 1 0 0 0 -2 0 5 5 0 0 1 -10 0 1 1 0 0 0 -2 0 7 7 0 0 0 6 6.92v2.08h-2.11a.89.89 0 0 0 -.89.89v.22a.89.89 0 0 0 .89.89h6.22a.89.89 0 0 0 .89-.89v-.22a.89.89 0 0 0 -.89-.89h-2.11v-2.08a7 7 0 0 0 6-6.92z" />
+                        </g>
+                      </svg>
+                    </div>
+                    <!-- File Upload Button -->
+                    <div class="file-upload"
+                         onclick="document.getElementById('fileInput').click()">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50">
+                        <path d="M 25 2 C 12.309295 2 2 12.309295 2 25 C 2 37.690705 12.309295 48 25 48 C 37.690705 48 48 37.690705 48 25 C 48 12.309295 37.690705 2 25 2 z M 25 4 C 36.609824 4 46 13.390176 46 25 C 46 36.609824 36.609824 46 25 46 C 13.390176 46 4 36.609824 4 25 C 4 13.390176 13.390176 4 25 4 z M 24 13 L 24 24 L 13 24 L 13 26 L 24 26 L 24 37 L 26 37 L 26 26 L 37 26 L 37 24 L 26 24 L 26 13 L 24 13 z" />
+                      </svg>
+                    </div>
                   </div>
                 </form>
               {% else %}
@@ -273,15 +293,9 @@
         <div class="participants__list scroll">
           {% for participant in participants %}
             <a href="{% url 'user-profile' participant.id %}" class="participant">
-              {% if request.user != participant %}         
-          <div class="avatar avatar--medium inactive">
-            <img src="{{ participant.avatar.url }}" />
-          </div>
-          {% else %}
-          <div class="avatar avatar--medium active">
-            <img src="{{ participant.avatar.url }}" />
-          </div>
-          {% endif %}
+              <div class="avatar avatar--medium {% if request.user != participant %}inactive{% else %}active{% endif %}">
+                <img src="{{ participant.avatar.url }}" />
+              </div>
               <p>
                 {{ participant.name }}
                 <span>{{ participant.username }}</span>
@@ -294,4 +308,5 @@
     </div>
     {% include 'base/edit_messageModal.html' %}
   </main>
+  <script>const ROOM_ID = {{ room.id }};</script>
 {% endblock text %}

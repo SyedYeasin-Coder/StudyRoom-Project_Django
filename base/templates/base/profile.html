@@ -38,23 +38,13 @@
         <div class="profile">
           <!-- Avatar Edit Button -->
           <div class="profile__avatar">
-            {% if request.user != user %}
-              <div class="avatar avatar--large inactive">
+            <div class="avatar avatar--large {% if request.user != user %}inactive{% else %}active{% endif %}">
                 <img src="{{ user.avatar.url|default:'/static/Images/avatar.svg' }}" />
                 <div class="avatar__overlay"
                      {% if "request.user==user" %}onclick="openAvatarModal()"{% endif %}>
                   {% if request.user == user %}<span>Edit</span>{% endif %}
                 </div>
               </div>
-            {% else %}
-              <div class="avatar avatar--large active">
-                <img src="{{ user.avatar.url|default:'/static/Images/avatar.svg' }}" />
-                <div class="avatar__overlay"
-                     {% if "request.user==user" %}onclick="openAvatarModal()"{% endif %}>
-                  {% if request.user == user %}<span>Edit</span>{% endif %}
-                </div>
-              </div>
-            {% endif %}
           </div>
           <!-- Modal for Avatar Preview and Upload -->
           {% if request.user == user %}

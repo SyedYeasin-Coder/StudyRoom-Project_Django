@@ -1,15 +1,16 @@
 import json
+from django.conf import settings
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
-from .models import Room, Topic, Message, User, MessageFile
+from .models import Room, Topic, Message, User, MessageFile, AudioMessage
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
 from .form import RoomForm, UserForm, MyUserCreationForm
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
-from django.core.files.storage import default_storage
+from django.core.files.storage import default_storage, FileSystemStorage
 
 # Create your views here.
 
@@ -85,16 +86,16 @@ def userProfile(request, pk):
     user = User.objects.get(id=pk)
     rooms = user.room_set.all().order_by('-created')
 
-    paginator = Paginator(rooms, 5)  # 5 rooms per page
+    paginator = Paginator(rooms, 4) 
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
     messages = user.message_set.all()
-    topics = Topic.objects.all()[:4]
+    topics = Topic.objects.all()
 
     return render(request, 'base/profile.html', {
         'user': user,
-        'rooms': page_obj,  # Pass paginated rooms
+        'rooms': page_obj, 
         'messages': messages,
         'topics': topics
     })
@@ -106,50 +107,77 @@ def home(request):
         Q(host__username__icontains=q) |
         Q(name__icontains=q) |
         Q(description__icontains=q) 
-    ).order_by('-created')
-
-    paginator = Paginator(rooms, 5)  # 5 rooms per page
+    )
+    paginator = Paginator(rooms, 4) 
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
-
     topics = Topic.objects.all()
     room_count = rooms.count()
-    messages = Message.objects.filter(Q(room__topic__name__icontains=q))[:5]
+    messages = Message.objects.filter(
+        Q(room__topic__name__icontains=q) |
+        Q(body__icontains=q)|
+        Q(room__name__icontains=q)
+    )[:5]
 
     return render(request, 'base/Home.html', {
-        "rooms": page_obj,  # Pass paginated rooms
+        "rooms": page_obj, 
         "topics": topics,
         "room_count": room_count,
         "messages": messages
     })
 
+def handle_uploaded_file(file):
+    fs = FileSystemStorage(location=settings.MEDIA_ROOT / 'messages')
+    filename = fs.save(file.name, file)  
+    file_url = fs.url(filename)
+    return file_url
+
 def room(request, pk):
     room = Room.objects.get(id=pk)
-    messages = room.message_set.all()
+    messages = room.message_set.prefetch_related('audiomessage', 'files').all()
     participants = room.participants.all()
 
     if request.method == "POST":
         body = request.POST.get('body', '').strip()
-        files = request.FILES.getlist('file')  
-        
-        if body or files:
+        files = request.FILES.getlist('file')
+        audio_file = request.FILES.get('audio_file')
+
+        # Create the message only if there is content (either text, file, or audio)
+        if body or files or audio_file:
+            # Create a message object with the body (if any)
             message = Message.objects.create(
                 user=request.user,
                 room=room,
-                body=body
+                body=body if body else ""  # Ensure body is an empty string if no text
             )
+
             uploaded_files = set()
 
+            # Handle uploaded files (attachments)
             for file in files:
                 if file.name not in uploaded_files:
                     MessageFile.objects.create(message=message, file=file, original_name=file.name)
                     uploaded_files.add(file.name)
 
+            # Handle audio file if provided
+            if audio_file:
+                # Make sure to create the AudioMessage and associate it with the same message
+                audio_message = AudioMessage.objects.create(
+                    user=request.user,
+                    room=room,
+                    message=message,  # Link the AudioMessage to the Message
+                    audio_file=audio_file
+                )
+                print(f"AudioMessage created and linked to Message ID: {message.id}")  # Debugging line
             room.participants.add(request.user)
+            return JsonResponse({"success": True, "message": "Message sent successfully"}, status=200)
+        
+        return JsonResponse({"error": "No message, file, or audio received"}, status=400)
 
-        return redirect('room', pk=room.id)
+    return render(request, 'base/room.html', {"room": room, "messages": messages, "participants": participants})
 
-    return render(request, 'base/room.html', {"room": room, "messages": messages, 'participants': participants})
+
+
 
 @login_required(login_url='login')
 def createRoom(request):
@@ -237,11 +265,11 @@ def edit_message(request, pk):
     return JsonResponse({"success": False, "error": "Invalid request"}, status=405)
 
 def room_list(request):
-    rooms = Room.objects.all()  # Fetch all rooms
-    paginator = Paginator(rooms, 5)  # Show 5 rooms per page
+    rooms = Room.objects.all() 
+    paginator = Paginator(rooms, 5)  
 
-    page_number = request.GET.get("page")  # Get the page number from URL
-    page_obj = paginator.get_page(page_number)  # Get rooms for the current page
+    page_number = request.GET.get("page") 
+    page_obj = paginator.get_page(page_number) 
 
     return render(request, "room_component.html", {"page_obj": page_obj})
 

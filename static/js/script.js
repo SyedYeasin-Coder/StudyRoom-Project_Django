@@ -132,45 +132,179 @@ function previewFile(event) {
 
 
 let selectedFiles = [];
-
 document.addEventListener("DOMContentLoaded", function () {
   const fileInput = document.getElementById("fileInput");
   const fileHolder = document.querySelector(".fileInput-holder");
   const messageInput = document.getElementById("messageInput");
   const messageForm = document.getElementById("messageForm");
+  let audioContext, analyser, animationFrame;
+  let dataArray;
+  let bufferLength;
+  let mediaRecorder;
+  let audioChunks = [];
+  let audioBlob;
+  let stream;
+  const micButton = document.getElementById("micButton");
+  const audioContainer = document.getElementById("audioContainer");
+  const audioPreview = document.getElementById("audioPreview");
+  const audioDataInput = document.getElementById("audioData");
+  const removeAudio = document.getElementById("removeAudio");
+  const canvas = document.getElementById("audioVisualizer");
+  const ctx = canvas.getContext("2d");
+  function updateCanvasColor() {
+    return getComputedStyle(document.body).getPropertyValue("--color-main").trim();
+  }
 
-  // Attach event listener for Enter key
-  messageInput.addEventListener("keydown", handleEnter);
+  // Observe changes in the root element’s class
+  const observer = new MutationObserver(() => {
+    updateCanvasColor();
+  });
+
+  // Start observing class changes on the <html> element
+  observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+
+  if (micButton) {
+    micButton.addEventListener("click", async function () {
+      if (!mediaRecorder || mediaRecorder.state === "inactive") {
+
+        audioContainer.style.display = "block";
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioContext = new AudioContext();
+        source = audioContext.createMediaStreamSource(stream);
+        analyser = audioContext.createAnalyser();
+        source.connect(analyser);
+        analyser.fftSize = 256;
+        bufferLength = analyser.frequencyBinCount;
+        dataArray = new Uint8Array(bufferLength);
+
+        function draw() {
+          animationFrame = requestAnimationFrame(draw);
+          analyser.getByteFrequencyData(dataArray);
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          ctx.fillStyle = updateCanvasColor();
+
+          for (let i = 0; i < bufferLength; i++) {
+            const barHeight = dataArray[i] / 2;
+            ctx.fillRect(i * 3, canvas.height - barHeight, 2, barHeight);
+          }
+        }
+
+        draw();
+
+        mediaRecorder.ondataavailable = event => {
+          audioChunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          cancelAnimationFrame(animationFrame);
+          stream.getTracks().forEach(track => track.stop());
+          audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+          const audioUrl = URL.createObjectURL(audioBlob);
+          audioPreview.src = audioUrl;
+          audioPreview.style.display = "block";
+
+          const reader = new FileReader();
+          reader.readAsDataURL(audioBlob);
+          reader.onloadend = () => {
+            audioDataInput.value = reader.result;
+          };
+          micButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                      <path d="m0 0h24v24h-24z" opacity="0" />
+                      <g>
+                      <path d="m12 15a4 4 0 0 0 4-4v-5a4 4 0 0 0 -8 0v5a4 4 0 0 0 4 4z" />
+                      <path d="m19 11a1 1 0 0 0 -2 0 5 5 0 0 1 -10 0 1 1 0 0 0 -2 0 7 7 0 0 0 6 6.92v2.08h-2.11a.89.89 0 0 0 -.89.89v.22a.89.89 0 0 0 .89.89h6.22a.89.89 0 0 0 .89-.89v-.22a.89.89 0 0 0 -.89-.89h-2.11v-2.08a7 7 0 0 0 6-6.92z" />
+                      </g>
+                    </svg>`;
+        };
+        mediaRecorder.start();
+        micButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="36" height="36" viewBox="0 0 36 36" preserveAspectRatio="xMidYMid meet">
+    <title>microphone-mute-line</title>
+    <path d="M30,17h-2c0,1.8-0.5,3.5-1.4,5l1.5,1.5C29.3,21.5,29.9,19.3,30,17z" class="clr-i-outline clr-i-outline-path-1"/><path d="M18,4c2.8,0,5,2.2,5,5v8c0,0.4-0.1,0.8-0.2,1.2l1.6,1.6c0.4-0.9,0.6-1.8,0.6-2.8V9c0-3.9-3.2-7-7.1-6.9   c-2.9,0-5.6,1.9-6.5,4.7L13,8.3C13.5,5.9,15.6,4.2,18,4z" class="clr-i-outline clr-i-outline-path-2"/><path d="M25.2,26.6l6.9,6.9l1.4-1.4L4,2.6L2.6,4l8.4,8.4V17c0,3.9,3.1,7,7,7c1.3,0,2.5-0.3,3.6-1l2.2,2.2C22.1,26.4,20.1,27,18,27   c-5.4,0.2-9.8-4.1-10-9.4c0-0.2,0-0.4,0-0.6H6c0.1,6.2,4.8,11.4,11,12v3h-3c-0.6,0-1,0.4-1,1s0.4,1,1,1h8c0.6,0,1-0.4,1-1   s-0.4-1-1-1h-3v-3C21.2,28.8,23.4,28,25.2,26.6z M13.8,19.7C13.3,18.9,13,18,13,17v-2.6l7.1,7.1C17.9,22.5,15.2,21.8,13.8,19.7z" class="clr-i-outline clr-i-outline-path-3"/>
+    <rect x="0" y="0" width="36" height="36" fill-opacity="0"/>
+</svg>`;
+        audioChunks = [];
+      } else {
+        mediaRecorder.stop();
+      }
+    });
+  }
+
+  function removeRecording() {
+    if (mediaRecorder && mediaRecorder.state === "recording") {
+      mediaRecorder.stop();
+    }
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+    }
+    audioContainer.style.display = "none";
+    audioPreview.src = "";
+    audioDataInput.value = "";
+    audioBlob = null;
+
+    micButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                      <path d="m0 0h24v24h-24z" opacity="0" />
+                      <g>
+                      <path d="m12 15a4 4 0 0 0 4-4v-5a4 4 0 0 0 -8 0v5a4 4 0 0 0 4 4z" />
+                      <path d="m19 11a1 1 0 0 0 -2 0 5 5 0 0 1 -10 0 1 1 0 0 0 -2 0 7 7 0 0 0 6 6.92v2.08h-2.11a.89.89 0 0 0 -.89.89v.22a.89.89 0 0 0 .89.89h6.22a.89.89 0 0 0 .89-.89v-.22a.89.89 0 0 0 -.89-.89h-2.11v-2.08a7 7 0 0 0 6-6.92z" />
+                      </g>
+                    </svg>`;
+  }
+
+
+  if (removeAudio) {
+    removeAudio.addEventListener("click", removeRecording);
+  }
+
+
+
+  if (messageInput) {
+    messageInput.addEventListener("keydown", handleEnter);
+  }
 
   function handleEnter(event) {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
-      sendMessage();
+      sendMessage(); // Make sure sendMessage() is defined!
     }
   }
 
   function sendMessage() {
+    const csrfToken = getCSRFToken(); // Get CSRF token
     let formData = new FormData(messageForm);
-    formData.append("body", messageInput.value);
+
+    // Append text message if not empty
+    if (messageInput.value.trim()) {
+      formData.append("body", messageInput.value);
+    }
 
     // Append selected files
     selectedFiles.forEach(file => {
       formData.append("file", file);
     });
 
+    // Append audio file if it exists
+    if (audioBlob) {
+      formData.append("audio_file", audioBlob, "recording.wav");
+    }
+
     // Disable input while sending
     messageInput.disabled = true;
 
     fetch(messageForm.action, {
       method: "POST",
+      headers: {
+        "X-CSRFToken": csrfToken,
+      },
       body: formData,
     })
       .then(response => {
         if (response.ok) {
-          window.location.reload(); // Refresh page on success
+          window.location.reload(); // Refresh on success
         } else {
           console.log("Error in sending message");
-          messageInput.disabled = false; // Re-enable input on error
+          messageInput.disabled = false;
         }
       })
       .catch(error => {
@@ -179,9 +313,13 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
-  fileInput.addEventListener("change", function (event) {
-    handleFileSelect(event.target.files);
-  });
+
+
+  if (fileInput) {
+    fileInput.addEventListener("change", function (event) {
+      handleFileSelect(event.target.files);
+    });
+  }
 
   function handleFileSelect(files) {
     if (files.length === 0) return;
@@ -442,13 +580,13 @@ window.onload = function () {
   var audioElements = document.getElementsByClassName('audioPlayer');
   var videoElements = document.getElementsByClassName('videoPlayer');
 
-  Array.from(audioElements).forEach(function(audioElement) {
+  Array.from(audioElements).forEach(function (audioElement) {
     var parentContainer = audioElement.closest('.message__file');
     if (parentContainer) {
       parentContainer.classList.add('message__file--audio');
     }
   });
-  Array.from(videoElements).forEach(function(videoElement) {
+  Array.from(videoElements).forEach(function (videoElement) {
     var parentContainer = videoElement.closest('.message__file');
     if (parentContainer) {
       parentContainer.classList.add('message__file--video');
@@ -465,10 +603,17 @@ function changePage(pageNumber) {
 
       // Replace room list
       document.querySelector(".room-slider").innerHTML = doc.querySelector(".room-slider").innerHTML;
-      
+
       // Replace pagination buttons
       document.querySelector(".pagination").innerHTML = doc.querySelector(".pagination").innerHTML;
     })
     .catch((error) => console.error("Error fetching page:", error));
 }
+
+
+
+
+
+
+
 

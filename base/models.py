@@ -2,8 +2,6 @@ import os
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-# Create your models here.
-
 class User(AbstractUser):
     name = models.CharField(max_length=200, null=True)
     email = models.EmailField(unique=True ,null=True)
@@ -47,16 +45,36 @@ class Message(models.Model):
     def __str__(self):
         return self.body[:50] if self.body else "File Upload"
     def delete(self, *args, **kwargs):
-        for file in self.files.all():
+        for file in self.files.all(): 
+            if file.file and os.path.isfile(file.file.path):
+                print(f"Deleting file: {file.file.path}")  
+                os.remove(file.file.path)  
             file.delete()  
-        super().delete(*args, **kwargs)
+
+        for audio in self.audiomessage.all():
+            if audio.audio_file and os.path.isfile(audio.audio_file.path):
+                print(f"Deleting audio file: {audio.audio_file.path}")  
+                os.remove(audio.audio_file.path) 
+            audio.delete() 
+
+        super().delete(*args, **kwargs) 
 
 class MessageFile(models.Model):
     message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name='files')
     file = models.FileField(upload_to='messages/')
     original_name = models.CharField(max_length=255, default="unknown")
-    def delete(self, *args, **kwargs):
-        if self.file:
-            if os.path.isfile(self.file.path):
-                os.remove(self.file.path)
-        super().delete(*args, **kwargs)
+    
+
+class AudioMessage(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    audio_file = models.FileField(upload_to='audio_messages/')
+    created = models.DateTimeField(auto_now_add=True)
+    message = models.ForeignKey(Message, related_name="audiomessage", on_delete=models.CASCADE, null=False) 
+
+    class Meta:
+        ordering = ['-created']
+
+    def __str__(self):
+        return f"AudioMessage from {self.user.name or self.user.username} in {self.room.name}"
+    

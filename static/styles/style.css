@@ -335,7 +335,7 @@ a {
   border-radius: 50%;
 }
 
-.avatar.avatar--large:after{
+.avatar.avatar--large:after {
   width : 2rem;
   height: 2rem;
   bottom: 2px;
@@ -578,7 +578,7 @@ a {
   display        : flex;
   justify-content: space-between;
   align-items    : flex-start;
-  gap: 5rem;
+  gap            : 5rem;
 }
 
 .layout--3>.container>div:first-child {
@@ -591,11 +591,11 @@ a {
 }
 
 .layout--3>.container>div:last-child {
-  flex-basis: 25%;
+  flex-basis      : 25%;
   /* max-width    : 22.5rem; */
-  background   : var(--color-dark-light);
-  padding      : 1rem;
-  border-radius: 5px;
+  background      : var(--color-dark-light);
+  padding         : 1rem;
+  border-radius   : 5px;
 }
 
 .layout--2>.container>div:first-child {
@@ -831,10 +831,10 @@ a {
   font-size       : 1.3rem;
   font-weight     : 700;
   letter-spacing  : 1px;
-  max-height: 3rem;
+  max-height      : 3rem;
 }
 
-.Browse{
+.Browse {
   background-color: var(--color-dark-medium);
 }
 
@@ -881,8 +881,10 @@ a {
 }
 
 .roomList__header p {
-  font-weight: 500;
-  color      : var(--color-dark-light);
+  font-weight  : 500;
+  color        : var(--color-dark-light);
+  border-top   : 1px solid var(--color-dark-medium);
+  border-bottom: 1px solid var(--color-dark-medium);
 }
 
 /*========== Room List Room ==========*/
@@ -999,6 +1001,7 @@ a {
   background   : var(--color-dark);
   border-radius: 5px;
   overflow     : hidden;
+  min-height   : 300px;
 }
 
 .activities__header {
@@ -1890,51 +1893,168 @@ input:-webkit-autofill {
   gap        : 1rem;
 }
 
-.thread__actions{
+.thread__actions {
   display: flex;
-  gap: 1.5rem;
+  gap    : 1.5rem;
 }
 
-.message__file--audio, .message__file--video{
+.message__file--audio,
+.message__file--video {
   flex-direction: column;
 }
-.message__file--audio audio{
-  width: 100%;
+
+.message__file--audio audio {
+  width     : 100%;
   margin-top: 1rem;
 }
-.message__file--video video{
-  width: 100%;
-  margin-top: 1rem;
+
+.message__file--video video {
+  width        : 100%;
+  margin-top   : 1rem;
   border-radius: 0.5rem;
 }
 
 audio::-webkit-media-controls-play-button,
-     audio::-webkit-media-controls-panel {
-     background-color: var(--color-main);
-     color: #000;
-     }
+audio::-webkit-media-controls-panel {
+  background-color: var(--color-main);
+  color           : #000;
+}
 
-.roomListRoom:hover{
+.roomListRoom:hover {
   transform : translateY(-5px);
-    box-shadow: 0 2px 20px 0px var(--color-main);
+  box-shadow: 0 2px 20px 0px var(--color-main);
 }
 
 .pagination {
-  display: flex;
+  display        : flex;
   justify-content: center;
-  align-items: center;
-  margin: 2rem 0;
+  align-items    : center;
+  margin         : 2rem 0;
 }
+
 .pagination button {
-  padding: 5px 10px;
-  margin: 0 5px;
-  border: none;
-  border-radius: 1rem;
+  padding         : 5px 10px;
+  margin          : 0 5px;
+  border          : none;
+  border-radius   : 1rem;
   background-color: var(--color-main);
-  color: white;
-  cursor: pointer;
-  transition:  all 0.4s ease-in-out;
+  color           : white;
+  cursor          : pointer;
+  transition      : all 0.4s ease-in-out;
 }
+
 .pagination button:hover {
   background-color: var(--color-success);
+}
+
+
+/* Audio Input Section (Recording) */
+#audioContainer {
+  display      : none;
+  width        : 100%;
+  max-width    : 400px;
+  background   : var(--color-dark-light);
+  padding      : 10px;
+  border-radius: 8px;
+  box-shadow   : 0px 2px 10px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  bottom: 0;
+  transform: translate(-20%,-75%);
+  min-height: 195px;
+}
+
+#audioVisualizer {
+  width        : 100%;
+  height       : 50px;
+  background   : var(--color-dark-medium);
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+/* Audio Play/Pause Button */
+#audioPreview {
+  width        : 100%;
+  max-width    : 400px;
+  margin-top   : 10px;
+  border-radius: 5px;
+}
+
+#removeAudio {
+  display         : inline-block;
+  background-color: #f44336;
+  color           : white;
+  padding         : 5px 10px;
+  font-size       : 14px;
+  border          : none;
+  border-radius   : 5px;
+  cursor          : pointer;
+  margin-top      : 10px;
+}
+
+#removeAudio:hover {
+  background-color: #d32f2f;
+}
+
+/* Audio Mic Button (During Recording) */
+.micInput {
+  cursor       : pointer;
+  display      : inline-block;
+  padding      : 0.5rem;
+  border-radius: 3rem;
+  transition   : background-color 0.3s ease;
+  margin-right : 1rem;
+}
+
+.micInput:hover {
+  background: var(--color-main);
+}
+
+.micInput svg {
+  width : 24px;
+  height: 24px;
+  fill  : white;
+}
+
+/* Adjust visibility when in use */
+#micButton {
+  display: block;
+}
+
+/* Style for the audio message when displayed */
+.message__file audio {
+  max-width    : 100%;
+  border-radius: 8px;
+  box-shadow   : 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.audiofileInput-container {
+  display    : flex;
+  align-items: center;
+  gap        : 1rem;
+  justify-content: flex-end;
+}
+
+
+#pauseAudio {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+#pauseAudio:hover {
+  background-color: #0056b3;
+}
+
+#pauseAudio svg {
+  width: 18px;
+  height: 18px;
+  fill: white;
 }
