@@ -159,16 +159,14 @@ def room(request, pk):
                     MessageFile.objects.create(message=message, file=file, original_name=file.name)
                     uploaded_files.add(file.name)
 
-            # Handle audio file if provided
             if audio_file:
-                # Make sure to create the AudioMessage and associate it with the same message
                 audio_message = AudioMessage.objects.create(
                     user=request.user,
                     room=room,
                     message=message,  # Link the AudioMessage to the Message
                     audio_file=audio_file
                 )
-                print(f"AudioMessage created and linked to Message ID: {message.id}")  # Debugging line
+            
             room.participants.add(request.user)
             return JsonResponse({"success": True, "message": "Message sent successfully"}, status=200)
         

@@ -16,8 +16,8 @@
                 <path d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z">
                 </path>
               </svg>
+              <h3>Recent Activities</h3>
             </a>
-            <h3>Recent Activities</h3>
           </div>
         </div>
         <div class="activities-page layout__body">
@@ -26,15 +26,9 @@
               <div class="activities__boxHeader roomListRoom__header">
                 <a href="{% url 'user-profile' message.user.id %}"
                    class="roomListRoom__author">
-                   {% if request.user != message.user %}         
-                   <div class="avatar avatar--small inactive">
-                     <img src="{{ message.user.avatar.url }}" />
-                   </div>
-                   {% else %}
-                   <div class="avatar avatar--small active">
-                     <img src="{{ message.user.avatar.url }}" />
-                   </div>
-                   {% endif %}
+                  <div class="avatar avatar--small {% if request.user != message.user %}inactive{% else %}active{% endif %}">
+                    <img src="{{ message.user.avatar.url }}" />
+                  </div>
                   <p>
                     {{ message.user.username }}
                     <span>{{ message.created | timesince }} ago</span>
@@ -62,6 +56,16 @@
                 </p>
                 <div class="activities__boxRoomContent">
                   {{ message.body| truncatewords:20 }}
+                  <!-- Display Audio Messages -->
+                  {% if message.audiomessage.all %}
+                    <div class="message__audio">
+                      <audio controls class="audioPlayer">
+                        <source src="{{ message.audiomessage.first.audio_file.url }}"
+                                type="audio/wav">
+                        Your browser does not support the audio element.
+                      </audio>
+                    </div>
+                  {% endif %}
                   {% if message.files.all %}
                     <div class="message__files">
                       {% for file in message.files.all %}

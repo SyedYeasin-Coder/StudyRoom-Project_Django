@@ -26,7 +26,7 @@
     <div class="activities__box">
       <div class="activities__boxHeader roomListRoom__header">
         <a href="{% url 'user-profile' message.user.id %}"
-           class="roomListRoom__author">       
+           class="roomListRoom__author">
           <div class="avatar avatar--small {% if request.user != message.user %}inactive{% else %}active{% endif %}">
             <img src="{{ message.user.avatar.url }}" />
           </div>
@@ -36,7 +36,7 @@
           </p>
         </a>
         {% if request.user == message.user %}
-          <div class="roomListRoom__actions">
+          <div class="roomListRoom__actions insideActivities">
             <a href="{% url 'delete-message' message.id %}">
               <svg version="1.1"
                    xmlns="http://www.w3.org/2000/svg"
@@ -57,6 +57,16 @@
         </p>
         <div class="activities__boxRoomContent">
           {{ message.body| truncatewords:20 }}
+          <!-- Display Audio Messages -->
+          {% if message.audiomessage.all %}
+          <div class="message__audio">
+            <audio controls class="audioPlayer">
+              <source src="{{ message.audiomessage.first.audio_file.url }}"
+                      type="audio/wav">
+              Your browser does not support the audio element.
+            </audio>
+          </div>
+        {% endif %}
           {% if message.files.all %}
             <div class="message__files">
               {% for file in message.files.all %}
@@ -96,14 +106,14 @@
                                   </audio>
                                 {% elif ext3 == "wav" %}
                                   <audio controls class="audioPlayer">
-                                    <source src="{{file.file.url}}" type="audio/wav">
+                                    <source src="{{ file.file.url }}" type="audio/wav">
                                   </audio>
                                 {% elif ext3 == "mkv" %}
-                                <img src="{% static 'Images/icons/mkv_icon.png' %}" class="file-icon">
+                                  <img src="{% static 'Images/icons/mkv_icon.png' %}" class="file-icon">
                                 {% elif ext3 == "mp4" %}
-                                <video class="videoPlayer" controls>
-                                  <source src="{{ file.file.url }}" type="video/mp4">
-                              </video>
+                                  <video class="videoPlayer" controls>
+                                    <source src="{{ file.file.url }}" type="video/mp4">
+                                  </video>
                                 {% else %}
                                   <img src="{% static 'Images/icons/default_file_icon.png' %}"
                                        class="file-icon">
