@@ -1981,9 +1981,6 @@ input:-webkit-autofill {
   border-radius: 0.5rem;
 }
 
-/*==============================
-=>  ChatGPT Styles
-================================*/
 /* Remove & Edit Buttons */
 .fileUpload-remove,
 .fileUpload-edit {
@@ -2112,7 +2109,6 @@ audio::-webkit-media-controls-panel {
   margin-bottom: 10px;
 }
 
-/* Audio Play/Pause Button */
 #audioPreview {
   width        : 100%;
   max-width    : 400px;
@@ -2160,12 +2156,10 @@ audio::-webkit-media-controls-panel {
   fill: var(--color-bg);
 }
 
-/* Adjust visibility when in use */
 #micButton {
   display: block;
 }
 
-/* Style for the audio message when displayed */
 .message__file audio {
   border-radius: 8px;
 }
