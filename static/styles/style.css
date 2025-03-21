@@ -441,8 +441,9 @@ a {
 
 @media screen and (max-width: 768px) {
   .mobile-menu .header__search {
-    display      : block;
-    margin-bottom: 2.4rem;
+    display        : flex;
+    margin-bottom  : 2.4rem;
+    justify-content: center;
   }
 }
 
@@ -492,6 +493,11 @@ a {
   gap             : 1rem;
   border-radius   : 4rem;
   transition      : all 0.4s ease;
+  width           : 100%;
+}
+
+.nav__search>label {
+  width: 30rem;
 }
 
 .header__search>label svg {
@@ -506,7 +512,7 @@ a {
 }
 
 .header__search input {
-  width     : 30rem;
+  width     : 100%;
   background: transparent;
   border    : none;
   outline   : none;
@@ -524,9 +530,10 @@ a {
   transition: all 0.4s ease;
 }
 
+
 @media screen and (max-width: 800px) {
   .header__search input {
-    width: 20rem;
+    width: 100%;
   }
 
   .header>.container {
@@ -662,20 +669,23 @@ a {
   background-color: var(--color-dark-light);
 }
 
-.layout__boxTitle a{
+.layout__boxTitle a {
   display    : flex;
   gap        : 1rem;
   align-items: center;
-  transition: all 0.4s ease;
+  transition : all 0.4s ease;
 }
+
 .layout__boxTitle a:hover {
-  cursor: pointer;
+  cursor   : pointer;
   transform: translateX(-4px);
 }
-.layout__boxTitle a:hover svg{
+
+.layout__boxTitle a:hover svg {
   fill: var(--color-main);
 }
-.layout__boxTitle a:hover h3{
+
+.layout__boxTitle a:hover h3 {
   color: var(--color-main);
 }
 
@@ -1046,6 +1056,7 @@ a {
   border-radius: 5px;
   overflow     : hidden;
   min-height   : 300px;
+  margin-bottom: 3rem;
 }
 
 .activities__header {
@@ -1310,17 +1321,19 @@ a {
   display    : flex;
   align-items: center;
   gap        : 1rem;
-  transition: all 0.3s ease;
+  transition : all 0.3s ease;
 }
 
 .room__topLeft a:hover {
-  cursor: pointer;
+  cursor   : pointer;
   transform: translateX(-4px);
 }
-.room__topLeft a:hover svg{
+
+.room__topLeft a:hover svg {
   fill: var(--color-main);
 }
-.room__topLeft a:hover h3{
+
+.room__topLeft a:hover h3 {
   color: var(--color-main);
 }
 
@@ -1418,7 +1431,7 @@ a {
   gap          : 1rem;
   align-items  : center;
   margin-bottom: 1rem;
-  max-width: max-content;
+  max-width    : max-content;
   transition   : all 0.3s ease-in-out;
 }
 
@@ -1522,16 +1535,26 @@ a {
   height    : 80%;
   margin    : 0 1rem;
   padding   : 0 0.5rem;
+  transition: all 0.3s ease-in-out;
 }
 
 .room__message>form>input:focus {
-  border : none;
-  outline: none;
-  color  : var(--color-light-gray);
+  border    : none;
+  outline   : none;
+  color     : var(--color-light-gray);
+  transition: all 0.3s ease-in-out;
 }
 
 .room__message>form>input::placeholder {
-  color: var(--color-light-gray);
+  color     : var(--color-light-gray);
+  transition: all 0.3s ease-in-out;
+
+}
+
+.room__message>form>input:hover::placeholder,
+.room__message>form>input:focus::placeholder {
+  color    : var(--color-main);
+  transform: translate3d(0, -2px, 0);
 }
 
 .participants__top h3 {
@@ -1564,6 +1587,7 @@ a {
   padding      : 1rem;
   transition   : all 0.3s ease-in-out;
 }
+
 .participant:hover {
   transform: translate3d(0, -2px, 0);
 }
@@ -1599,9 +1623,10 @@ a {
   width           : 100%;
   margin-top      : -1rem;
   padding         : 1.2rem;
+  padding-top     : 2rem;
   font-size       : 1.4rem;
   font-weight     : 500;
-  position        : relative;
+  display         : flex;
 }
 
 /* Modal Overlay */
@@ -1769,12 +1794,12 @@ li {
 }
 
 .file-upload:hover {
-  background-color: var(--color-dark) !important;
+  background-color: var(--color-main) !important;
 }
 
-.file-upload:hover svg {
-  fill: var(--color-light);
-}
+/* .file-upload:hover svg {
+  fill: var(--color-bg);
+} */
 
 
 .for__group {
@@ -1862,10 +1887,13 @@ input:-webkit-autofill {
   scale           : 1.1;
   box-shadow      : 0 3px 10px 0px var(--color-main);
 }
-.circle:hover svg , .circle:hover span{
-  fill: var(--color-light);
+
+.circle:hover svg,
+.circle:hover span {
+  fill : var(--color-light);
   color: var(--color-light);
 }
+
 .circle:hover .createRoom {
   display: inline;
 }
@@ -2128,6 +2156,10 @@ audio::-webkit-media-controls-panel {
   fill  : white;
 }
 
+.micInput svg:hover {
+  fill: var(--color-bg);
+}
+
 /* Adjust visibility when in use */
 #micButton {
   display: block;
@@ -2173,4 +2205,8 @@ audio::-webkit-media-controls-panel {
 .message__audio audio {
   width        : 100%;
   border-radius: 8px;
+}
+
+.roomList {
+  margin-bottom: 3rem;
 }
