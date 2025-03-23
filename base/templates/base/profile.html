@@ -27,24 +27,26 @@
             <div id="avatarModal" class="modal" data-url="{% url 'update-avatar' %}">
               <div class="modal-content">
                 <h3 class="layout__boxHeader">Choose Profile Picture</h3>
-                <div class="avatar-preview">
-                  <img id="avatarImage"
-                       src="{{ user.avatar.url|default:'/static/Images/avatar.svg' }}" />
-                </div>
-                <button class="btn btn--main"
-                        onclick="document.getElementById('avatarInput').click()">
-                  Upload New
-                  Photo
-                </button>
-                <input type="file"
-                       id="avatarInput"
-                       name="avatar"
-                       accept="image/*"
-                       style="display: none"
-                       onchange="previewAvatar(event)">
-                <div class="modal-actions">
-                  <button class="btn btn--dark" onclick="closeAvatarModal()">Cancel</button>
-                  <button class="btn btn--main" onclick="saveAvatar()">Save</button>
+                <div class="avatar-modal_body">
+                  <div class="avatar-preview">
+                    <img id="avatarImage"
+                         src="{{ user.avatar.url|default:'/static/Images/avatar.svg' }}" />
+                  </div>
+                  <button class="btn btn--main AvatarUploadPhoto"
+                          onclick="document.getElementById('avatarInput').click()">
+                    Upload New
+                    Photo
+                  </button>
+                  <input type="file"
+                         id="avatarInput"
+                         name="avatar"
+                         accept="image/*"
+                         style="display: none"
+                         onchange="previewAvatar(event)">
+                  <div class="modal-actions">
+                    <button class="btn btn--dark" onclick="closeAvatarModal()">Cancel</button>
+                    <button class="btn btn--main" onclick="saveAvatar()">Save</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -53,8 +55,12 @@
             <h3>{{ user.name }}</h3>
             <p>{{ user.username }}</p>
             {% if request.user == user %}
-              <a href="{% url 'update-user' %}" class="btn btn--main btn--pill">Edit Profile</a>
-              <a href="{% url 'delete-account' %}" class="btn btn--danger">Delete Account</a>
+              <div class="profile__actions_container">
+                <div class="profile__actions">
+                  <a href="{% url 'update-user' %}" class="btn btn--main btn--pill">Edit Profile</a>
+                  <a href="{% url 'delete-account' %}" class="btn btn--danger_pill">Delete Account</a>
+                </div>
+              </div>
             {% endif %}
           </div>
           <div class="profile__about">

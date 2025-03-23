@@ -265,6 +265,7 @@ a {
   color        : var(--color-main);
   background   : transparent;
   border       : 2px solid var(--color-main);
+  justify-content: center;
 }
 
 .action-button {
@@ -1639,7 +1640,7 @@ a {
 /* Modal Content */
 .modal-content {
   background-color: var(--color-dark);
-  padding         : 1.5rem;
+  /* padding         : 1.5rem; */
   border-radius   : 10px;
   width           : 350px;
   max-width       : 90%;
@@ -2215,9 +2216,41 @@ audio::-webkit-media-controls-panel {
   flex-direction: column;
   gap: 10px;
   margin-top: 20px;
+  padding: 1.5rem;
 }
 
 .btn--danger {
-  background-color: #dc3545;
-  color: white;
+  background-color: var(--color-error);
+  color: var(--color-light);
+}
+.btn--danger_pill {
+  display: flex;
+  justify-content: center;
+  border-radius: 10rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  padding: 6px 2.5rem;
+  color: var(--color-error);
+  background: transparent;
+  border: 2px solid var(--color-error);
+}
+
+.profile__actions{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  max-width: max-content;
+}
+
+.profile__actions_container{
+  display: flex;
+  justify-content: center;
+}
+
+.avatar-modal_body{
+  padding: 1.5rem;
+}
+.AvatarUploadPhoto{
+  width: 100%;
 }
