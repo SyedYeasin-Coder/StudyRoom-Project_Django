@@ -640,10 +640,36 @@ function changePage(pageNumber) {
     .catch((error) => console.error("Error fetching page:", error));
 }
 
+// Open the Settings Modal
+function openSettingsModal() {
+  document.getElementById("settingsModal").style.display = "flex";
+}
 
+// Close the Settings Modal
+function closeSettingsModal() {
+  document.getElementById("settingsModal").style.display = "none";
+}
 
+document.addEventListener("DOMContentLoaded", function () {
+  // Close modal when clicking outside of it
+  window.onclick = function (event) {
+    const modal = document.getElementById("settingsModal");
+    if (event.target === modal) {
+      closeSettingsModal();
+    }
+  };
 
+  // Attach event listener to the settings button
+  const settingsButton = document.querySelector(".dropdown-link");
+  if (settingsButton) {
+    settingsButton.addEventListener("click", function (event) {
+      event.preventDefault();
+      openSettingsModal();
+    });
+  }
 
-
+  // Ensure modal is hidden on page load
+  document.getElementById("settingsModal").style.display = "none";
+});
 
 

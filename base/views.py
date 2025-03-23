@@ -1,16 +1,17 @@
 import json
-from django.conf import settings
-from django.core.paginator import Paginator
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
-from .models import Room, Topic, Message, User, MessageFile, AudioMessage
-from django.contrib.auth import authenticate, login, logout
 from django.db.models import Q
-from .form import RoomForm, UserForm, MyUserCreationForm
+from django.conf import settings
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.core.paginator import Paginator
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.core.files.storage import default_storage, FileSystemStorage
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from .form import RoomForm, UserForm, MyUserCreationForm
+from .models import Room, Topic, Message, User, MessageFile, AudioMessage
 
 # Create your views here.
 
@@ -54,8 +55,19 @@ def registerUser(request):
 
     return render(request, 'base/login_register.html', {'me': me, 'form': form})
 
+@login_required(login_url='login')
+def delete_account(request):
+    if request.user.is_superuser:
+        messages.error(request, "Admin accounts cannot be deleted.")
+        return redirect('user-profile', pk=request.user.id)
 
+    if request.method == 'POST':
+        user = request.user
+        user.delete()
+        messages.success(request, "Your account has been deleted successfully.")
+        return redirect('home')
 
+    return render(request, 'base/delete_account.html')
 
 @login_required(login_url='login')
 def updateUser(request):

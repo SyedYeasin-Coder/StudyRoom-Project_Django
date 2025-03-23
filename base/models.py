@@ -34,6 +34,11 @@ class User(AbstractUser):
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
+        self.room_set.all().delete()
+        self.topics.all().delete()
+        for message in self.message_set.all():
+            message.delete()
+
         if self.avatar and self.avatar.name != "avatar.svg":
             avatar_path = self.avatar.path
             if os.path.exists(avatar_path):
@@ -43,13 +48,14 @@ class User(AbstractUser):
 
 class Topic(models.Model):
     name = models.CharField(max_length=200)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="topics")
 
     def __str__(self):
         return self.name
 
 class Room(models.Model):
     host = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    topic = models.ForeignKey(Topic, on_delete=models.SET_NULL, null=True)
+    topic = models.ForeignKey(Topic, on_delete=models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)
     participants = models.ManyToManyField(User, related_name='participants', blank=True)
@@ -61,6 +67,7 @@ class Room(models.Model):
 
     def __str__(self):
         return str(self.name)
+
 
 class Message(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
