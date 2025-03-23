@@ -2,31 +2,7 @@
 {% block text %}
   <script>
   // Save the avatar and handle form submission
-  function saveAvatar() {
-    const avatarInput = document.getElementById('avatarInput').files[0];
-    if (!avatarInput) return;
-
-    const formData = new FormData();
-    formData.append('avatar', avatarInput);
-
-    fetch("{% url 'update-avatar' %}", {
-      method: "POST",
-      headers: {
-        'X-CSRFToken': '{{ csrf_token }}'  // Ensure CSRF token is available in the template
-      },
-      body: formData
-    })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          document.getElementById("avatarImage").src = data.avatar_url;
-          closeAvatarModal();
-        } else {
-          console.error(data.error);
-        }
-      })
-      .catch(error => console.error("Error:", error));
-  }
+  
   </script>
   <main class="profile-page layout layout--3">
     <div class="container">
@@ -48,7 +24,7 @@
           </div>
           <!-- Modal for Avatar Preview and Upload -->
           {% if request.user == user %}
-            <div id="avatarModal" class="modal">
+            <div id="avatarModal" class="modal" data-url="{% url 'update-avatar' %}">
               <div class="modal-content">
                 <h3 class="layout__boxHeader">Choose Profile Picture</h3>
                 <div class="avatar-preview">

@@ -142,18 +142,14 @@ def room(request, pk):
         files = request.FILES.getlist('file')
         audio_file = request.FILES.get('audio_file')
 
-        # Create the message only if there is content (either text, file, or audio)
         if body or files or audio_file:
-            # Create a message object with the body (if any)
             message = Message.objects.create(
                 user=request.user,
                 room=room,
-                body=body if body else ""  # Ensure body is an empty string if no text
+                body=body if body else "" 
             )
-
             uploaded_files = set()
 
-            # Handle uploaded files (attachments)
             for file in files:
                 if file.name not in uploaded_files:
                     MessageFile.objects.create(message=message, file=file, original_name=file.name)
@@ -163,7 +159,7 @@ def room(request, pk):
                 audio_message = AudioMessage.objects.create(
                     user=request.user,
                     room=room,
-                    message=message,  # Link the AudioMessage to the Message
+                    message=message, 
                     audio_file=audio_file
                 )
             

@@ -33,10 +33,40 @@ function closeAvatarModal() {
     modal.style.display = 'none';
   }
 }
+function saveAvatar() {
+  const avatarInput = document.getElementById('avatarInput').files[0];
+  if (!avatarInput) return;
 
-document.addEventListener("DOMContentLoaded", function () {
+  const formData = new FormData();
+  formData.append('avatar', avatarInput);
+
+  // Get the correct update-avatar URL from the modal's data attribute
+  const updateAvatarUrl = document.getElementById("avatarModal").getAttribute("data-url");
+
+  fetch(updateAvatarUrl, {
+    method: "POST",
+    headers: {
+      'X-CSRFToken': '{{ csrf_token }}'  // Ensure CSRF token is available
+    },
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+      if (data.success) {
+        document.getElementById("avatarImage").src = data.avatar_url;
+        closeAvatarModal();
+        window.location.reload();
+      } else {
+        console.error(data.error);
+      }
+  })
+  .catch(error => console.error("Error:", error));
+}
+
+
+if(document.getElementById('avatarModal')){
   closeAvatarModal();
-});
+}
 
 function previewAvatar(event) {
   const reader = new FileReader();

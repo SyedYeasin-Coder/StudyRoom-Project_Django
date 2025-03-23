@@ -4,15 +4,42 @@ from django.db import models
 from django.utils.timezone import now
 from django.contrib.auth.models import AbstractUser
 
+def user_avatar_path(instance, filename):
+    return f"user_avatar/{instance.username}_{filename}"
+
 class User(AbstractUser):
     name = models.CharField(max_length=200, null=True)
     email = models.EmailField(unique=True ,null=True)
     bio = models.TextField(null=True, blank=True)
 
-    avatar = models.ImageField(null=True, default="avatar.svg")
+    avatar = models.ImageField(upload_to=user_avatar_path, null=True, default="avatar.svg")
     
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
+    def save(self, *args, **kwargs):
+        try:
+            # Get the old avatar before updating
+            old_user = User.objects.get(id=self.id)
+            if old_user.avatar and old_user.avatar.name != "avatar.svg":
+                old_avatar_path = old_user.avatar.path
+
+                # Check if avatar is being changed
+                if self.avatar and old_user.avatar != self.avatar:
+                    if os.path.exists(old_avatar_path):
+                        os.remove(old_avatar_path)
+
+        except User.DoesNotExist:
+            pass  
+
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        if self.avatar and self.avatar.name != "avatar.svg":
+            avatar_path = self.avatar.path
+            if os.path.exists(avatar_path):
+                os.remove(avatar_path)
+
+        super().delete(*args, **kwargs)
 
 class Topic(models.Model):
     name = models.CharField(max_length=200)
