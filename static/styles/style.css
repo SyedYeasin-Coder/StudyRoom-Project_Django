@@ -258,13 +258,13 @@ a {
 }
 
 .btn--pill {
-  border-radius: 10rem;
-  font-size    : 1.4rem;
-  font-weight  : 700;
-  padding      : 6px 2.5rem;
-  color        : var(--color-main);
-  background   : transparent;
-  border       : 2px solid var(--color-main);
+  border-radius  : 10rem;
+  font-size      : 1.4rem;
+  font-weight    : 700;
+  padding        : 6px 2.5rem;
+  color          : var(--color-main);
+  background     : transparent;
+  border         : 2px solid var(--color-main);
   justify-content: center;
 }
 
@@ -632,10 +632,10 @@ a {
 }
 
 .layout--3>.container>div:last-child {
-  flex-basis      : 25%;
-  background      : var(--color-dark-light);
-  padding         : 1rem;
-  border-radius   : 5px;
+  flex-basis   : 25%;
+  background   : var(--color-dark-light);
+  padding      : 1rem;
+  border-radius: 5px;
 }
 
 .layout--2>.container>div:first-child {
@@ -1252,6 +1252,7 @@ a {
 
 .profile__about {
   margin-top: 2rem;
+  min-height: 8rem;
 }
 
 .profile__about h3 {
@@ -1462,12 +1463,12 @@ a {
 }
 
 .threads {
-  background         : var(--color-bg);
-  border-radius      : 0.7rem;
-  overflow-y         : auto;
-  height             : 100%;
-  padding            : 1rem 2rem;
-  width              : 100%;
+  background   : var(--color-bg);
+  border-radius: 0.7rem;
+  overflow-y   : auto;
+  height       : 100%;
+  padding      : 1rem 2rem;
+  width        : 100%;
 }
 
 .thread {
@@ -1639,13 +1640,13 @@ a {
 
 /* Modal Content */
 .modal-content {
-  background-color: var(--color-dark);
+  background-color   : var(--color-dark);
   /* padding         : 1.5rem; */
-  border-radius   : 10px;
-  width           : 350px;
-  max-width       : 90%;
-  text-align      : center;
-  color           : var(--color-light);
+  border-radius      : 10px;
+  width              : 350px;
+  max-width          : 90%;
+  text-align         : center;
+  color              : var(--color-light);
 }
 
 
@@ -2199,58 +2200,120 @@ audio::-webkit-media-controls-panel {
 
 /* Modal Styles */
 .modal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
+  display         : none;
+  position        : fixed;
+  z-index         : 1000;
+  left            : 0;
+  top             : 0;
+  width           : 100%;
+  height          : 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  align-items: center;
-  justify-content: center;
+  align-items     : center;
+  justify-content : center;
 }
 
 .modal-actions-settings {
-  display: flex;
+  display       : flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 20px;
-  padding: 1.5rem;
+  gap           : 10px;
+  margin-top    : 20px;
+  padding       : 1.5rem;
 }
 
 .btn--danger {
   background-color: var(--color-error);
-  color: var(--color-light);
+  color           : var(--color-light);
 }
+
 .btn--danger_pill {
-  display: flex;
+  display        : flex;
   justify-content: center;
-  border-radius: 10rem;
-  font-size: 1.4rem;
-  font-weight: 700;
-  padding: 6px 2.5rem;
-  color: var(--color-error);
-  background: transparent;
-  border: 2px solid var(--color-error);
+  border-radius  : 10rem;
+  font-size      : 1.4rem;
+  font-weight    : 700;
+  padding        : 6px 2.5rem;
+  color          : var(--color-error);
+  background     : transparent;
+  border         : 2px solid var(--color-error);
 }
 
-.profile__actions{
-  display: flex;
+.profile__actions {
+  display       : flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 20px;
-  max-width: max-content;
+  gap           : 10px;
+  margin-top    : 20px;
+  max-width     : max-content;
 }
 
-.profile__actions_container{
-  display: flex;
+.profile__actions_container {
+  display        : flex;
   justify-content: center;
 }
 
-.avatar-modal_body{
+.avatar-modal_body {
   padding: 1.5rem;
 }
-.AvatarUploadPhoto{
+
+.AvatarUploadPhoto {
   width: 100%;
+}
+
+/* Banner Styles */
+
+.profile__banner {
+  position        : relative;
+  width           : 100%;
+  height          : 250px;
+  /* Adjust height as needed */
+  overflow        : hidden;
+  background-color: #e1f6fb;
+  border-bottom   : 3px solid #71c6dd;
+  /* Matches your theme */
+}
+
+.profile__banner img {
+  width     : 100%;
+  height    : 100%;
+  object-fit: cover;
+}
+
+.banner__overlay {
+  position       : absolute;
+  bottom         : 0;
+  width          : 100%;
+  height         : 20%;
+  background     : rgba(0, 0, 0, 0.5);
+  color          : white;
+  display        : flex;
+  align-items    : center;
+  justify-content: center;
+  font-size      : 16px;
+  cursor         : pointer;
+  transition     : 0.3s ease-in-out;
+}
+
+.profile__banner:hover .banner__overlay {
+  height    : 100%;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.avatarinRegister {
+  position     : relative;
+  display      : inline-block;
+  border-radius: 50%;
+  border       : 2px solid var(--color-main);
+}
+.avatarinRegister.avatar--large img{
+  display: block;
+  width: 8rem;
+  height: 8rem;
+  border-radius: 50%;
+}
+.avatarinRegister img{
+  object-fit: cover;
+  object-position: center;
+}
+
+.avatarinRegister:hover .avatar__overlay {
+  opacity: 1;
 }

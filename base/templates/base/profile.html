@@ -65,7 +65,10 @@
           </div>
           <div class="profile__about">
             <h3>About</h3>
+            
+            {% if user.bio %}
             <p>{{ user.bio }}</p>
+            {% endif %}
           </div>
         </div>
         <div class="roomList__header">
