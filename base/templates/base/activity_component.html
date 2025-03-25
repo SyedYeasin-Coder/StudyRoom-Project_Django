@@ -67,6 +67,7 @@
             </audio>
           </div>
         {% endif %}
+          <!-- Display Files -->
           {% if message.files.all %}
             <div class="message__files">
               {% for file in message.files.all %}
@@ -132,6 +133,7 @@
               {% endfor %}
             </div>
           {% endif %}
+          <!-- End Display Files -->
         </div>
       </div>
     </div>

@@ -18,12 +18,10 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ['username']
     def save(self, *args, **kwargs):
         try:
-            # Get the old avatar before updating
             old_user = User.objects.get(id=self.id)
             if old_user.avatar and old_user.avatar.name != "avatar.svg":
                 old_avatar_path = old_user.avatar.path
 
-                # Check if avatar is being changed
                 if self.avatar and old_user.avatar != self.avatar:
                     if os.path.exists(old_avatar_path):
                         os.remove(old_avatar_path)
@@ -95,7 +93,6 @@ class Message(models.Model):
             if os.path.exists(user_folder) and not os.listdir(user_folder):
                 shutil.rmtree(user_folder) 
 
-        # Delete the Message object
         super().delete(*args, **kwargs)  
 
 class MessageFile(models.Model):

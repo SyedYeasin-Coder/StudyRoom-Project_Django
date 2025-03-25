@@ -13,18 +13,14 @@ from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from .form import RoomForm, UserForm, MyUserCreationForm
 from .models import Room, Topic, Message, User, MessageFile, AudioMessage
 
-# Create your views here.
-
 def loginView(request):
     me = ''
-
     if request.user.is_authenticated:
         return redirect('home')
 
     if request.method == "POST":
         email = request.POST.get('email')
         password = request.POST.get('password')
-
         user = authenticate(request, email=email, password=password)
 
         if user != None:
@@ -32,7 +28,6 @@ def loginView(request):
             return redirect('home')
         else:
             me = "Invalid email or password!" 
-
     return render(request, 'base/login_register.html', {'me': me, 'page': 'login'})
 
 
@@ -43,7 +38,6 @@ def Userlogout(request):
 def registerUser(request):
     form = MyUserCreationForm()
     me = ""
-
     if request.method == 'POST':
         form = MyUserCreationForm(request.POST, request.FILES)
         if form.is_valid():
@@ -60,7 +54,6 @@ def delete_account(request):
     if request.user.is_superuser:
         messages.error(request, "Admin accounts cannot be deleted.")
         return redirect('user-profile', pk=request.user.id)
-
     if request.method == 'POST':
         user = request.user
         user.delete()
@@ -86,7 +79,6 @@ def updateUser(request):
 @csrf_exempt
 def update_avatar(request):
     user = request.user
-
     if request.method == 'POST' and request.FILES.get('avatar'):
         user.avatar = request.FILES['avatar']
         user.save()
@@ -97,11 +89,9 @@ def update_avatar(request):
 def userProfile(request, pk):
     user = User.objects.get(id=pk)
     rooms = user.room_set.all().order_by('-created')
-
     paginator = Paginator(rooms, 4) 
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
-
     messages = user.message_set.all()
     topics = Topic.objects.all()
 
@@ -148,7 +138,6 @@ def room(request, pk):
     room = Room.objects.get(id=pk)
     messages = room.message_set.prefetch_related('audiomessage', 'files').all()
     participants = room.participants.all()
-
     if request.method == "POST":
         body = request.POST.get('body', '').strip()
         files = request.FILES.getlist('file')
@@ -173,17 +162,11 @@ def room(request, pk):
                     room=room,
                     message=message, 
                     audio_file=audio_file
-                )
-            
+                )   
             room.participants.add(request.user)
             return JsonResponse({"success": True, "message": "Message sent successfully"}, status=200)
-        
         return JsonResponse({"error": "No message, file, or audio received"}, status=400)
-
     return render(request, 'base/room.html', {"room": room, "messages": messages, "participants": participants})
-
-
-
 
 @login_required(login_url='login')
 def createRoom(request):
@@ -206,6 +189,7 @@ def updateRoom(request, pk):
     room = Room.objects.get(id=pk)
     form = RoomForm(instance=room)
     topics = Topic.objects.all()
+
     if request.user != room.host:
         return HttpResponse('You are not allowed here!!')
 
@@ -222,19 +206,21 @@ def updateRoom(request, pk):
 @login_required(login_url='login')
 def deleteRoom(request, pk):
     room = Room.objects.get(id=pk)
+
     if request.user != room.host:
         return HttpResponse('You can\'t delete this room!!')
+    
     if request.method == 'POST':
         room.delete()
         return redirect('home')
+    
     return render(request, 'base/delete.html', {'obj' : room})
 @login_required(login_url='login')
 def deleteMessage(request, pk):
     message = get_object_or_404(Message, id=pk) 
-
     if request.user != message.user:
         return HttpResponse("You can't delete this message!")
-
+    
     if request.method == "POST":
         room = message.room 
         message.delete()  
@@ -242,10 +228,9 @@ def deleteMessage(request, pk):
 
         if not userMessages:
             room.participants.remove(request.user)
-
         next_url = request.GET.get("next") or request.META.get("HTTP_REFERER") or "home"
         return redirect(next_url)  
-
+    
     return render(request, "base/delete.html", {"obj": message, 'page': 'delete_message'})
 
 
@@ -257,27 +242,16 @@ def edit_message(request, pk):
         try:
             data = json.loads(request.body)
             new_text = data.get("new_text", "").strip()
-
+            
             if not new_text:
                 return JsonResponse({"success": False, "error": "Message cannot be empty"}, status=400)
-
             message.body = new_text
             message.save()
             return JsonResponse({"success": True, "new_text": new_text})
-
         except json.JSONDecodeError:
             return JsonResponse({"success": False, "error": "Invalid JSON"}, status=400)
-
+        
     return JsonResponse({"success": False, "error": "Invalid request"}, status=405)
-
-def room_list(request):
-    rooms = Room.objects.all() 
-    paginator = Paginator(rooms, 5)  
-
-    page_number = request.GET.get("page") 
-    page_obj = paginator.get_page(page_number) 
-
-    return render(request, "room_component.html", {"page_obj": page_obj})
 
 #! Mobile Menu
 def topicsPage(request):

@@ -157,8 +157,6 @@
   --color-error      : #dd3d3d;
 }
 
-/*========== base styles ==========*/
-
 * {
   font-family: "Quicksand", "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
     "Helvetica Neue", sans-serif;
@@ -204,7 +202,6 @@ a {
   text-decoration: none;
 }
 
-/*========== components ==========*/
 .container {
   max-width: 150rem;
   width    : 90%;
@@ -342,7 +339,6 @@ a {
   right : 3.5px;
 }
 
-/* New Overlay Styles */
 .avatar__overlay {
   position        : absolute;
   top             : 0;
@@ -716,10 +712,6 @@ a {
   }
 }
 
-/*==============================
-=>  Topics
-================================*/
-
 .form__group {
   margin-bottom: 2rem;
   width        : 100%;
@@ -827,10 +819,6 @@ a {
 .form__avatar label:hover {
   text-decoration: underline;
 }
-
-/*==============================
-=>  Topics
-================================*/
 
 .topics__header {
   display        : flex;
@@ -1161,33 +1149,17 @@ a {
   transform: translateY(-2px);
 }
 
-/*==============================
-=>  Create Room
-================================*/
-
 .create-room.layout .layout__box {
   max-width: 68rem;
 }
-
-/*==============================
-=>  Update Account
-================================*/
 
 .update-account.layout .layout__box {
   max-width: 68rem;
 }
 
-/*==============================
-=>  Delete Item
-================================*/
-
 .delete-item.layout .layout__box {
   max-width: 68rem;
 }
-
-/*==============================
-=>  Auth
-================================*/
 
 .auth__tagline {
   text-align   : center;
@@ -1624,7 +1596,6 @@ a {
   display         : flex;
 }
 
-/* Modal Overlay */
 .modal {
   display         : none;
   justify-content : center;
@@ -1638,10 +1609,8 @@ a {
   z-index         : 1000;
 }
 
-/* Modal Content */
 .modal-content {
   background-color   : var(--color-dark);
-  /* padding         : 1.5rem; */
   border-radius      : 10px;
   width              : 350px;
   max-width          : 90%;
@@ -1650,7 +1619,6 @@ a {
 }
 
 
-/* Modal Header */
 .modal-content h3.layout__boxHeader {
   display                : flex;
   padding                : 1rem;
@@ -1663,7 +1631,6 @@ a {
   justify-content        : center;
 }
 
-/* Avatar Preview Section */
 .avatar-preview {
   display        : flex;
   justify-content: center;
@@ -1678,14 +1645,12 @@ a {
   box-shadow   : 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Modal Actions */
 .modal-actions {
   display        : flex;
   justify-content: space-between;
   margin-top     : 1.5rem;
 }
 
-/* Button Styling */
 .button {
   padding      : 10px 20px;
   border-radius: 5px;
@@ -1788,11 +1753,6 @@ li {
 .file-upload:hover {
   background-color: var(--color-main) !important;
 }
-
-/* .file-upload:hover svg {
-  fill: var(--color-bg);
-} */
-
 
 .for__group {
   display: inline;
@@ -2256,45 +2216,6 @@ audio::-webkit-media-controls-panel {
 
 .AvatarUploadPhoto {
   width: 100%;
-}
-
-/* Banner Styles */
-
-.profile__banner {
-  position        : relative;
-  width           : 100%;
-  height          : 250px;
-  /* Adjust height as needed */
-  overflow        : hidden;
-  background-color: #e1f6fb;
-  border-bottom   : 3px solid #71c6dd;
-  /* Matches your theme */
-}
-
-.profile__banner img {
-  width     : 100%;
-  height    : 100%;
-  object-fit: cover;
-}
-
-.banner__overlay {
-  position       : absolute;
-  bottom         : 0;
-  width          : 100%;
-  height         : 20%;
-  background     : rgba(0, 0, 0, 0.5);
-  color          : white;
-  display        : flex;
-  align-items    : center;
-  justify-content: center;
-  font-size      : 16px;
-  cursor         : pointer;
-  transition     : 0.3s ease-in-out;
-}
-
-.profile__banner:hover .banner__overlay {
-  height    : 100%;
-  background: rgba(0, 0, 0, 0.7);
 }
 
 .avatarinRegister {

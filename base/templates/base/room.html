@@ -7,7 +7,7 @@
       <div class="room">
         <div class="room__top">
           <div class="room__topLeft">
-            <a href="{% url 'home' %}">
+            <a href="{{ request.META.HTTP_REFERER }}">
               <svg version="1.1"
                    xmlns="http://www.w3.org/2000/svg"
                    width="32"
@@ -20,6 +20,7 @@
               <h3>Study Room</h3>
             </a>
           </div>
+          <!-- Room Actions Start -->
           {% if room.host == request.user %}
             <div class="room__topRight">
               <a href="{% url 'update-room' room.id %}">
@@ -55,6 +56,7 @@
               </a>
             </div>
           {% endif %}
+          <!-- Room Actions End -->
         </div>
         <div class="room__box scroll">
           <div class="room__header scroll">
@@ -71,6 +73,7 @@
                 <span>{{ room.host.name }}</span>
               </a>
             </div>
+            <!-- Display Room Description -->
             {% with room.description|striptags|safe as clean_text %}
               <div class="room__details">
                 <p id="description" class="short-text">{{ clean_text }}</p>
@@ -81,6 +84,7 @@
                 {% endif %}
               </div>
             {% endwith %}
+            <!-- End Display Room Description -->
             <span class="room__topics">{{ room.topic }}</span>
           </div>
           <div class="room__conversation">
@@ -136,7 +140,7 @@
                       </div>
                     {% endif %}
                   </div>
-                  <!-- Message With Toggle -->
+                  <!-- Display Message-->
                   <div class="thread__details">
                     {% with message.body|striptags|safe as clean_text %}
                       {% if clean_text %}
@@ -158,7 +162,7 @@
                       </audio>
                     </div>
                   {% endif %}
-                    <!-- Display Multiple Uploaded Files -->
+                    <!-- Display Files -->
                     {% if message.files.all %}
                       <div class="message__files">
                         {% for file in message.files.all %}
@@ -224,7 +228,7 @@
                         {% endfor %}
                       </div>
                     {% endif %}
-                    
+                    <!-- End Display Files -->
                   </div>
                 </div>
               {% endfor %}
@@ -245,7 +249,7 @@
                   <input type="file" name="file" id="fileInput" style="display: none" multiple>
                   <div class="fileInput-holder"></div>
                   <div class="audiofileInput-container" id="audiofileInput_container">
-                    <!-- Audio Input Section (Initially Hidden) -->
+                    <!-- Audio Input Section -->
                     <div id="audioContainer" style="display: none;">
                       <canvas id="audioVisualizer"></canvas>
                       <audio id="audioPreview" controls style="display: none;"></audio>
@@ -283,7 +287,8 @@
         </div>
       </div>
       <!-- Room End -->
-      <!--   Start -->
+
+      <!-- Participants Start -->
       <div class="participants">
         <div class="participants__top">
           <h3>
@@ -304,7 +309,7 @@
           {% endfor %}
         </div>
       </div>
-      <!--  End -->
+      <!-- Participants End -->
     </div>
     {% include 'base/edit_messageModal.html' %}
   </main>

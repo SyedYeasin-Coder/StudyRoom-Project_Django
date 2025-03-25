@@ -9,10 +9,10 @@
       <!-- Activities Start -->
       {% include 'base/activity_component.html' %}
       <!-- Activities End -->
+
       <!-- Room List Start -->
       <div class="roomList">
         <div class="profile">
-          <!-- Avatar Edit Button -->
           <div class="profile__avatar">
             <div class="avatar avatar--large {% if request.user != user %}inactive{% else %}active{% endif %}">
                 <img src="{{ user.avatar.url|default:'/static/Images/avatar.svg' }}" />
@@ -51,6 +51,8 @@
               </div>
             </div>
           {% endif %}
+          <!-- End Modal -->
+
           <div class="profile__info">
             <h3>{{ user.name }}</h3>
             <p>{{ user.username }}</p>
@@ -77,9 +79,9 @@
           </div>
         </div>
         {% include 'base/room_component.html' with rooms=rooms %}
-
       </div>
       <!-- Room List End -->
+       
       <!-- Topics Start -->
       {% include 'base/topic_component.html' %}
       <!-- Topics End -->

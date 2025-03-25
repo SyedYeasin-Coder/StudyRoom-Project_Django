@@ -16,14 +16,12 @@ def update_room_on_participant_change(sender, instance, action, **kwargs):
 
 @receiver(post_delete, sender=Room)
 def delete_empty_topics_on_room_delete(sender, instance, **kwargs):
-    """Deletes the topic if it has no rooms left"""
     topic = instance.topic
     if topic and not topic.room_set.exists():
         topic.delete()
 
 @receiver(pre_save, sender=Room)
 def delete_empty_topics_on_room_update(sender, instance, **kwargs):
-    """Deletes the topic if it's about to be set to null and has no rooms"""
     if instance.pk:
         old_instance = Room.objects.get(pk=instance.pk)
         if old_instance.topic and old_instance.topic != instance.topic:

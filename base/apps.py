@@ -5,4 +5,4 @@ class BaseConfig(AppConfig):
     name = 'base'
 
     def ready(self):
-        import base.signals  # Ensure this matches your app's name
+        import base.signals

@@ -24,7 +24,7 @@ if (conversationThread) conversationThread.scrollTop = conversationThread.scroll
 
 // Open the avatar modal popup
 function openAvatarModal() {
-  document.getElementById("avatarModal").style.display = "flex"; // Centered display
+  document.getElementById("avatarModal").style.display = "flex"; 
 }
 
 function closeAvatarModal() {
@@ -40,13 +40,12 @@ function saveAvatar() {
   const formData = new FormData();
   formData.append('avatar', avatarInput);
 
-  // Get the correct update-avatar URL from the modal's data attribute
   const updateAvatarUrl = document.getElementById("avatarModal").getAttribute("data-url");
 
   fetch(updateAvatarUrl, {
     method: "POST",
     headers: {
-      'X-CSRFToken': '{{ csrf_token }}'  // Ensure CSRF token is available
+      'X-CSRFToken': '{{ csrf_token }}'  
     },
     body: formData
   })
@@ -140,7 +139,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// Event listeners for theme switching
 LTtheme.addEventListener("click", () => {
   let currentTheme = document.body.classList.value.match(/LT-\d+/)?.[0] || "LT-0";
   let newTheme = getNextTheme(currentTheme, LTClasses);
@@ -185,12 +183,10 @@ document.addEventListener("DOMContentLoaded", function () {
     return getComputedStyle(document.body).getPropertyValue("--color-main").trim();
   }
 
-  // Observe changes in the root element’s class
   const observer = new MutationObserver(() => {
     updateCanvasColor();
   });
 
-  // Start observing class changes on the <html> element
   observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
 
   if (micButton) {
@@ -296,30 +292,26 @@ document.addEventListener("DOMContentLoaded", function () {
   function handleEnter(event) {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
-      sendMessage(); // Make sure sendMessage() is defined!
+      sendMessage(); 
     }
   }
 
   function sendMessage() {
-    const csrfToken = getCSRFToken(); // Get CSRF token
+    const csrfToken = getCSRFToken(); 
     let formData = new FormData(messageForm);
 
-    // Append text message if not empty
     if (messageInput.value.trim()) {
       formData.append("body", messageInput.value);
     }
 
-    // Append selected files
     selectedFiles.forEach(file => {
       formData.append("file", file);
     });
 
-    // Append audio file if it exists
     if (audioBlob) {
       formData.append("audio_file", audioBlob, "recording.wav");
     }
 
-    // Disable input while sending
     messageInput.disabled = true;
 
     fetch(messageForm.action, {
@@ -331,7 +323,7 @@ document.addEventListener("DOMContentLoaded", function () {
     })
       .then(response => {
         if (response.ok) {
-          window.location.reload(); // Refresh on success
+          window.location.reload(); 
         } else {
           console.log("Error in sending message");
           messageInput.disabled = false;
@@ -413,25 +405,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
       removeButton.addEventListener("click", function () {
         fileContainer.remove();
-        // Remove file from selectedFiles using name matching
         selectedFiles = selectedFiles.filter(f => f.name !== file.name);
-
-        // **Ensure file input updates properly**
         let dataTransfer = new DataTransfer();
         selectedFiles.forEach(f => dataTransfer.items.add(f));
-        fileInput.files = dataTransfer.files;  // Reassign updated list
+        fileInput.files = dataTransfer.files; 
 
-        // Hide file holder if no files remain
         if (selectedFiles.length === 0) {
           fileInput.value = "";
           fileHolder.style.display = "none";
         }
       });
-
       editButton.addEventListener("click", function () {
         openEditModal(fileName, file);
       });
-
 
       fileContainer.appendChild(filePreview);
       fileContainer.appendChild(fileName);
@@ -443,15 +429,14 @@ document.addEventListener("DOMContentLoaded", function () {
   document.querySelectorAll(".thread__edit").forEach(edit => {
     edit.addEventListener("click", function () {
       const messageId = edit.getAttribute("data-message-id");
-      const messageElement = document.getElementById(messageId); // Get the actual message element
+      const messageElement = document.getElementById(messageId); 
 
       if (!messageElement) {
         console.error("Message element not found!");
         return;
       }
-
       const messageText = messageElement.textContent.trim();
-      openEditModal(null, null, messageId, messageText); // Pass only message-related params
+      openEditModal(null, null, messageId, messageText);
     });
   });
 });
@@ -462,7 +447,6 @@ function openEditModal(fileNameElement, fileObj = null, messageId = null, messag
   const saveButton = document.getElementById("saveFileName");
   const cancelButton = document.getElementById("cancelEditButton");
 
-  // Check if editing a file or a text message
   if (fileObj) {
     input.value = fileNameElement.textContent.split(".").slice(0, -1).join(".");
     modal.querySelector(".layout__boxHeader").textContent = "Edit File Name";
@@ -476,11 +460,9 @@ function openEditModal(fileNameElement, fileObj = null, messageId = null, messag
     return;
   }
 
-  // Open modal
   modal.style.display = "flex";
 
-  // ✅ Remove old event listeners safely and add new one
-  saveButton.replaceWith(saveButton.cloneNode(true)); // Ensure fresh button
+  saveButton.replaceWith(saveButton.cloneNode(true));
   const newSaveButton = document.getElementById("saveFileName");
 
   newSaveButton.addEventListener("click", function (event) {
@@ -501,8 +483,6 @@ function openEditModal(fileNameElement, fileObj = null, messageId = null, messag
       console.log("Message saved!");
     }
   });
-
-  // ✅ Cancel button event listener (already works)
   cancelButton.addEventListener("click", function (event) {
     event.preventDefault();
     event.stopPropagation();
@@ -510,55 +490,38 @@ function openEditModal(fileNameElement, fileObj = null, messageId = null, messag
   });
 }
 
-
-
-
 window.closeEditModal = function () {
   document.getElementById("editFileModal").style.display = "none";
 };
 
 function saveFileName(fileNameElement, newName, fileObj) {
   if (newName.trim() !== "") {
-    let fileExtension = fileObj.name.split(".").pop(); // Keep original extension
+    let fileExtension = fileObj.name.split(".").pop(); 
     let renamedFile = new File([fileObj], newName + "." + fileExtension, { type: fileObj.type });
 
-    // Replace file reference in selectedFiles
     let index = selectedFiles.findIndex(f => f.name === fileObj.name);
     if (index !== -1) {
       selectedFiles[index] = renamedFile;
     }
 
-    // Fully reset fileInput.files
     let dataTransfer = new DataTransfer();
     selectedFiles.forEach(file => dataTransfer.items.add(file));
-    fileInput.files = dataTransfer.files; // Reassign updated file list
-
-    // Update UI
+    fileInput.files = dataTransfer.files;
     fileNameElement.textContent = newName + "." + fileExtension;
-
-    // **Ensure fileHolder is accessible**
     const fileHolder = document.querySelector(".fileInput-holder");
-
-    // **Update remove button event listener**
     let fileContainer = fileNameElement.closest(".EachInput");
     let removeButton = fileContainer.querySelector(".fileUpload-remove");
 
     if (removeButton) {
-      removeButton.replaceWith(removeButton.cloneNode(true)); // Remove old listener
+      removeButton.replaceWith(removeButton.cloneNode(true)); 
       let newRemoveButton = fileContainer.querySelector(".fileUpload-remove");
 
       newRemoveButton.addEventListener("click", function () {
         fileContainer.remove();
-
-        // Remove file from selectedFiles using updated reference
         selectedFiles = selectedFiles.filter(f => f.name !== renamedFile.name);
-
-        // Ensure file input updates properly
         let dataTransfer = new DataTransfer();
         selectedFiles.forEach(f => dataTransfer.items.add(f));
-        fileInput.files = dataTransfer.files; // Reassign updated list
-
-        // **Fix: Check if fileHolder is available before accessing it**
+        fileInput.files = dataTransfer.files; 
         if (selectedFiles.length === 0) {
           fileInput.value = "";
           if (fileHolder) {
@@ -630,36 +593,27 @@ function changePage(pageNumber) {
     .then((html) => {
       let parser = new DOMParser();
       let doc = parser.parseFromString(html, "text/html");
-
-      // Replace room list
       document.querySelector(".room-slider").innerHTML = doc.querySelector(".room-slider").innerHTML;
-
-      // Replace pagination buttons
       document.querySelector(".pagination").innerHTML = doc.querySelector(".pagination").innerHTML;
     })
     .catch((error) => console.error("Error fetching page:", error));
 }
 
-// Open the Settings Modal
 function openSettingsModal() {
   document.getElementById("settingsModal").style.display = "flex";
 }
 
-// Close the Settings Modal
 function closeSettingsModal() {
   document.getElementById("settingsModal").style.display = "none";
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  // Close modal when clicking outside of it
   window.onclick = function (event) {
     const modal = document.getElementById("settingsModal");
     if (event.target === modal) {
       closeSettingsModal();
     }
   };
-
-  // Attach event listener to the settings button
   const settingsButton = document.querySelector(".dropdown-link");
   if (settingsButton) {
     settingsButton.addEventListener("click", function (event) {
@@ -667,8 +621,6 @@ document.addEventListener("DOMContentLoaded", function () {
       openSettingsModal();
     });
   }
-
-  // Ensure modal is hidden on page load
   document.getElementById("settingsModal").style.display = "none";
 });
 
