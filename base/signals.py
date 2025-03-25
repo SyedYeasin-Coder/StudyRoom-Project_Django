@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save, post_delete, m2m_changed, pre_save
 from django.dispatch import receiver
-from .models import Message, Room
+from .models import Message, Room, Topic
 
 @receiver([post_save, post_delete], sender=Message)
 def update_room_on_message_change(sender, instance, **kwargs):
@@ -16,9 +16,12 @@ def update_room_on_participant_change(sender, instance, action, **kwargs):
 
 @receiver(post_delete, sender=Room)
 def delete_empty_topics_on_room_delete(sender, instance, **kwargs):
-    topic = instance.topic
-    if topic and not topic.room_set.exists():
-        topic.delete()
+    try:
+        topic = instance.topic  
+        if topic and not topic.room_set.exists():  
+            # topic.delete()
+    except Topic.DoesNotExist:
+        pass  
 
 @receiver(pre_save, sender=Room)
 def delete_empty_topics_on_room_update(sender, instance, **kwargs):

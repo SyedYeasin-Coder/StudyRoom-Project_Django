@@ -33,7 +33,6 @@ class User(AbstractUser):
 
     def delete(self, *args, **kwargs):
         self.room_set.all().delete()
-        self.topics.all().delete()
         for message in self.message_set.all():
             message.delete()
 
@@ -46,8 +45,6 @@ class User(AbstractUser):
 
 class Topic(models.Model):
     name = models.CharField(max_length=200)
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="topics")
-
     def __str__(self):
         return self.name
 
