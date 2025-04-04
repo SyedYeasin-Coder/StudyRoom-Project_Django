@@ -19,7 +19,7 @@ def delete_empty_topics_on_room_delete(sender, instance, **kwargs):
     try:
         topic = instance.topic  
         if topic and not topic.room_set.exists():  
-            # topic.delete()
+            topic.delete()
     except Topic.DoesNotExist:
         pass  
 
